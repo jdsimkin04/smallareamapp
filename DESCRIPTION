@@ -1,0 +1,15 @@
+Package: smallareamapp
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Jonathan",
+           family = "Simkin",
+           role = c("aut", "cre"),
+           email = "jonathan.simkin@bccancer.bc.ca",
+           comment = c(ORCID = "https://orcid.org/0000-0001-6184-6024"))
+Description: This package hosts the small area risk mApp, which uses bayesian spatial models and INLA for disease mapping and small area risk estimation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
