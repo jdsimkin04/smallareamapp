@@ -10,6 +10,8 @@ It's built with the intention to support cancer surveillance and disease mapping
 
 Computation is done with integrated nested Laplace approximation (INLA). We use the amazing package created by the R-INLA team. Check out their website and install their package from the [R-INLA website](https://www.r-inla.org/).
 
+<img src="https://github.com/jdsimkin04/smallareamapp/blob/main/app_demo.gif" width="50%"/>
+
 ## Installation
 
 **smallareamApp** is not available on [CRAN](https://cran.r-project.org/). You can install it now through Github via [my Github repo](https://github.com/jdsimkin04/smallareamapp) with:
@@ -29,10 +31,6 @@ library(smallareamapp)
 runmApp()
 ## basic example code
 ```
-
-And this is what that looks like!
-
-<img src="https://github.com/jdsimkin04/smallareamapp/blob/main/app_demo.gif" width="75%"/>
 
 ### Prepping data for upload
 
