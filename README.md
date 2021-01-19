@@ -4,11 +4,11 @@
 
 <!-- badges: end -->
 
-This package runs a Shiny app that helps you estimate disease risk across small geographical areas using Bayesian spatial modeling. And yes, you can you use your own data.
+This package runs a Shiny app that helps you estimate disease risk across small geographical areas using Bayesian spatial modeling. And yes, you can use your own data.
 
-It's built with the intention to support cancer surveillance and disease mapping but works with any area-based disease event data.
+It's built with the aim to support cancer surveillance and disease mapping but works with any area-based disease event data.
 
-Computation is done with integrated nested Laplace approximation (INLA). We use the amazing package created by the R-INLA team. Check out their website and install their package from the [R-INLA website](https://www.r-inla.org/).
+Bayesian computation is done with integrated nested Laplace approximation (INLA). We use the amazing package created by the R-INLA team. Check out their website and install their package from the [R-INLA website](https://www.r-inla.org/).
 
 <img src="https://github.com/jdsimkin04/smallareamapp/blob/main/app_demo.gif" width="50%"/>
 
@@ -35,6 +35,5 @@ runmApp()
 ### Prepping data for upload
 
 **smallareamApp** analyzes *your* data. There's one catch though. The data has to be set up exactly right for the app to accept it. I know it's not ideal... but we're working on that! For the meantime, there's a template table on the app that shows you what it is expecting.
-
 
 More to come... Stay tuned!
