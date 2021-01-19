@@ -4,7 +4,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This Shiny app helps you estimate disease risk across small geographical areas using Bayesian spatial modeling. And yes, you can you use your own data. 
+This package runs a Shiny app that helps you estimate disease risk across small geographical areas using Bayesian spatial modeling. And yes, you can you use your own data. 
 
 It's built with the intention to support cancer surveillance and disease mapping but works with any area-based disease event data.
 
@@ -12,7 +12,7 @@ Computation is done with integrated nested Laplace approximation (INLA). We use 
 
 ## Installation
 
-You can install the Github version of smallareamapp from [my Github repo](https://github.com/jdsimkin04/smallareamapp) with:
+*smallareamApp* is not available on [CRAN](https://cran.r-project.org/). You can install it now through Github via [my Github repo](https://github.com/jdsimkin04/smallareamapp) with:
 
 ``` r
 devtools::install_github("jdsimkin04/smallareamapp")
