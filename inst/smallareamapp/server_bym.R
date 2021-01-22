@@ -60,7 +60,11 @@ server <- function(input, output, session) {
                csv = read.csv(input$file_case$datapath),
                validate("Invalid file; Please upload a .csv"))
       } else {
-        template_csv2
+        read.csv(system.file('smallareamapp/extdata', 'scotlip_shiny_input.csv', package='smallareamapp')) %>%
+          mutate(sir = round(as.numeric(sir),2),
+
+                 lci = NA_real_,
+                 uci = NA_real_)
       }
     })
   ## End

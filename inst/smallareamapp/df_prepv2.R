@@ -1,10 +1,10 @@
 # Template csv to show on the file upload page of shiny
 template_csv <- read.csv(system.file('smallareamapp/extdata', 'template_csv.csv', package='smallareamapp'))
 
-template_csv2 <- read.csv(system.file('smallareamapp/extdata', 'scotlip_shiny_input.csv', package='smallareamapp')) %>%
-  mutate(sir = round(as.numeric(sir),2),
-         lci = NA_real_,
-         uci = NA_real_)
+# template_csv2 <- read.csv(system.file('smallareamapp/extdata', 'scotlip_shiny_input.csv', package='smallareamapp')) %>%
+#   mutate(sir = round(as.numeric(sir),2),
+#          lci = NA_real_,
+#          uci = NA_real_)
 set.ZeroPolicyOption(TRUE)
 get.ZeroPolicyOption()
 
