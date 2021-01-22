@@ -103,7 +103,7 @@ server <- function(input, output, session) {
 
     #update sex filter
   observeEvent(data(), {
-    updateSelectInput(session, "sex_var",
+   updateSelectInput(session, "sex_var",
                       choices = unique(data()$sex),
                       selected = unique(data()$sex)[1])
   })
@@ -250,7 +250,8 @@ server <- function(input, output, session) {
   #dataset function, load data and filter based on inputs
   datasetInput <- reactive({
 
-    data() %>%
+    mydatain <- data()
+    mydatain %>%
       filter(cancer == input$cancer_var,
              sex == input$sex_var)
 
