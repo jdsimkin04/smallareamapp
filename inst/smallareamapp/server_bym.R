@@ -103,7 +103,8 @@ server <- function(input, output, session) {
 
     #update sex filter
   observeEvent(data(), {
-   updateSelectInput(session, "sex_var",
+   updateSelectInput(session,
+                     inputId = "sex_var",
                       choices = unique(data()$sex),
                       selected = unique(data()$sex)[1])
   })
@@ -401,7 +402,7 @@ improved_res <- reactive({
 ## End
 
 # Data table for Analytics tab
-  output$table1 <- DT::renderDataTable({
+  output$table1 <- DT::renderDataTable(server = F, {
     dt <- test()
     if(input$spatial_choice == "No"){
       dt %>%

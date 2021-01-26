@@ -33,6 +33,7 @@ ui <- bs4DashPage(
 
   #Sidebar menu with sub-menus
   dashboardSidebar(
+    skin = "dark",
     sidebarMenu(
       id = "sidebarMenu",
     menuItem(
