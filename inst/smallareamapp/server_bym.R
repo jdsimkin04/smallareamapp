@@ -693,27 +693,73 @@ improved_res <- reactive({
   })
 
   #Model diagnostics: CPO plot
-  output$cpo_plot <- renderPlot({
+  output$cpo_plot <- renderPlotly({
     if(input$spatial_choice == "No"){
     } else{
-
-    n <- datasetInput() %>% nrow
+mytable <- datasetInput()
+    n <- nrow(mytable)
     result <- test_diagnostics()
-    plot(1:n, result$cpo$cpo, ylab="CPO",type="n")
-    text(1:n, result$cpo$cpo, 1:n)}
+    names <- mytable[, input$area_name_map]
+    cpo <- result$cpo$cpo
+
+    test <-
+      tibble(
+        N = 1:n,
+        region_name = names,
+        CPO = cpo
+      )
+
+    fig <- plot_ly(data = test, x = ~N, y = ~CPO,
+                   # name = ~region_name,
+                   text = ~region_name,
+                   hovertemplate = paste(
+                     "<b>%{text}</b><br>",
+                     "%{yaxis.title.text}: %{y:.2f}<br>",
+                     "<extra></extra>"
+                   ),
+                   color = ~CPO, size = ~CPO)
+    fig <- fig %>% layout(title = 'CPO Plot',
+                          yaxis = list(zeroline = FALSE, title = "CPO"),
+                          xaxis = list(zeroline = FALSE, title = "Regions"))
+
+    fig
+    }
   })
 
 
   #Model diagnostics: PIT plot
-  output$pit_plot <- renderPlot({
+  output$pit_plot <- renderPlotly({
     if(input$spatial_choice == "No"){
     } else{
-      n <- datasetInput() %>% nrow
-      result <- test_diagnostics()
+
+      mytable <- datasetInput()
+      n <- nrow(mytable)
+      uniquant <- (1:n)/(n+1)
+    result <- test_diagnostics()
+    names <- mytable[, input$area_name_map]
     pit <- result$cpo$pit
-    uniquant <- (1:n)/(n+1)
-    plot(logit(uniquant), logit(sort(pit)), xlab="uniform quantiles", ylab="Sorted PIT values", main="Logit scale")
-    abline(0,1)
+
+    test <-
+      tibble(
+        N = logit(uniquant),
+        region_name = names,
+        PIT = logit(sort(pit))
+      )
+
+    ffig <- plot_ly(data = test, x = ~N, y = ~PIT,
+                    # name = ~region_name,
+                    text = ~region_name,
+                    hovertemplate = paste(
+                      "<b>%{text}</b><br>",
+                      "%{yaxis.title.text}: %{y:.2f}<br>",
+                      "<extra></extra>"
+                    ),
+                    color = ~PIT, size = ~PIT)
+    fig <- fig %>% layout(title = 'PIT Plot',
+                          yaxis = list(zeroline = FALSE, title = "PIT"),
+                          xaxis = list(zeroline = FALSE, title = "Regions"))
+
+    fig
     }
 
   })

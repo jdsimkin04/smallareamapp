@@ -32,6 +32,7 @@ Depends:
     bs4Dash,
     shinydashboardPlus,
     INLA,
-    gtools
+    gtools,
+    plotly
 Remotes:
     jdsimkin04/shinyinla

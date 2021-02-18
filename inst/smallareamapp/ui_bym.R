@@ -360,12 +360,12 @@ ui <- bs4DashPage(
             status = "info",
             solidHeader = T,
             collapsible = T,
-            collapsed = FALSE,
+            collapsed = T,
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
             width = 12,
-            plotOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE)
+            plotlyOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE)
 
           )
         ),
@@ -377,12 +377,12 @@ ui <- bs4DashPage(
             status = "info",
             solidHeader = T,
             collapsible = T,
-            collapsed = FALSE,
+            collapsed = T,
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
             width = 12,
-            plotOutput("pit_plot") %>% withSpinner(hide.ui = FALSE)
+            plotlyOutput("pit_plot") %>% withSpinner(hide.ui = FALSE)
           )
         )
       ),
@@ -396,7 +396,7 @@ ui <- bs4DashPage(
             status = "info",
             solidHeader = T,
             collapsible = T,
-            collapsed = F,
+            collapsed = T,
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
