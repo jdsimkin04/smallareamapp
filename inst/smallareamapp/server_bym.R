@@ -28,7 +28,7 @@ server <- function(input, output, session) {
   ## When users click the "analytics" menu, the control bar pops out
   observeEvent(input$sidebarMenu, {
     idx <- strsplit(input$sidebarMenu, "_")[[1]][2]
-    if (idx == 5) {
+    if (idx %in% c(5,6)) {
       updateControlbar("controlbar")
     }
     })

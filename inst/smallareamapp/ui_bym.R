@@ -63,6 +63,12 @@ ui <- bs4DashPage(
       "Analytics",
       tabName = "menu_5",
       icon = icon("chart-bar")
+    ),
+
+    menuItem(
+      "Model diagnostics",
+      tabName = "menu_6",
+      icon = icon("glasses")
     )
   ),
   actionButton("map1", " Snapshot map #1", status = "secondary", size = "sm", icon = icon("camera-retro")),
@@ -341,6 +347,62 @@ ui <- bs4DashPage(
           htmlOutput("spatial_effect")
         )
       )
+      )
+    ),
+    bs4TabItem(
+      tabName = "menu_6",
+      fluidRow(
+        #Card for mapping variable #1, default relative risk
+        column(
+          6,
+          bs4Card(
+            title = "CPO Plot",
+            status = "info",
+            solidHeader = T,
+            collapsible = T,
+            collapsed = FALSE,
+            closable = FALSE,
+            labelStatus = "info",
+            labelText = "",
+            width = 12
+            #need plotoutput
+          )
+        ),
+        #Card for mapping variable #2, default exceedance probability
+        column(
+          6,
+          bs4Card(
+            title = "PIT Plot",
+            status = "info",
+            solidHeader = T,
+            collapsible = T,
+            collapsed = FALSE,
+            closable = FALSE,
+            labelStatus = "info",
+            labelText = "",
+            width = 12
+            #need plotoutput
+          )
+        )
+      ),
+      #MSPE, R squared and potential outliers
+      fluidRow(
+        column(
+          width = 6,
+          # Datatable
+          bs4Card(
+            title = "Model measurements",
+            status = "info",
+            solidHeader = T,
+            collapsible = T,
+            collapsed = F,
+            closable = FALSE,
+            labelStatus = "info",
+            labelText = "",
+            width = 12
+            #need htmltable
+          )
+        )
       )
     )
       )
