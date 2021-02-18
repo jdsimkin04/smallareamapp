@@ -746,7 +746,7 @@ mytable <- datasetInput()
         PIT = logit(sort(pit))
       )
 
-    ffig <- plot_ly(data = test, x = ~N, y = ~PIT,
+    fig <- plot_ly(data = test, x = ~N, y = ~PIT,
                     # name = ~region_name,
                     text = ~region_name,
                     hovertemplate = paste(
