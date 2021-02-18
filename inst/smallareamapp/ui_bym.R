@@ -364,8 +364,9 @@ ui <- bs4DashPage(
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
-            width = 12
-            #need plotoutput
+            width = 12,
+            plotOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE)
+
           )
         ),
         #Card for mapping variable #2, default exceedance probability
@@ -380,8 +381,8 @@ ui <- bs4DashPage(
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
-            width = 12
-            #need plotoutput
+            width = 12,
+            plotOutput("pit_plot") %>% withSpinner(hide.ui = FALSE)
           )
         )
       ),

@@ -244,7 +244,7 @@ server <- function(input, output, session) {
     )
   })
 
-  ## End
+  ## End ##
 
   ### Data for Analytics ###
 
@@ -286,7 +286,8 @@ test <- reactive({
         res <- inla(formula,
                     family = "poisson", data = chsadf_inla,
                     E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE)
+                    control.compute = list(dic = TRUE, cpo = T, config = T),
+                    control.inla = list(strategy = "laplace", npoints = 21)
         )
 
         exc <- sapply(res$marginals.fitted.values,
@@ -317,7 +318,8 @@ test <- reactive({
         res <- inla(formula_bym,
                     family = "poisson", data = chsadf_inla,
                     E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE)
+                    control.compute = list(dic = TRUE, cpo = T, config = T),
+                    control.inla = list(strategy = "laplace", npoints = 21)
         )
 
         exc <- sapply(res$marginals.fitted.values,
@@ -342,6 +344,45 @@ test <- reactive({
     }
 
   })
+
+# For model diagnostics, we have to run the model like in test, but just get to the model result
+test_diagnostics <- reactive({
+
+  mytable <- datasetInput()
+  #When spatial model is "No", users can still examine SIR and case values
+    if(input$model_choice == "bym2"){
+      chsadf_inla <-
+        mytable %>%
+        mutate(idareau = 1:(mytable %>% nrow),
+               idareav = 1:(mytable %>% nrow),
+               idarea = 1:(mytable %>% nrow))
+
+      res <- inla(formula,
+                  family = "poisson", data = chsadf_inla,
+                  E = exp, control.predictor = list(compute = TRUE),
+                  control.compute = list(dic = TRUE, cpo = T, config = T),
+                  control.inla = list(strategy = "laplace", npoints = 21)
+      )
+
+      res
+
+    } else{
+      chsadf_inla <-
+        mytable %>%
+        mutate(idareau = 1:(mytable %>% nrow),
+               idareav = 1:(mytable %>% nrow),
+               idarea = 1:(mytable %>% nrow))
+
+      res <- inla(formula_bym,
+                  family = "poisson", data = chsadf_inla,
+                  E = exp, control.predictor = list(compute = TRUE),
+                  control.compute = list(dic = TRUE, cpo = T, config = T),
+                  control.inla = list(strategy = "laplace", npoints = 21)
+      )
+      res
+    }
+
+})
   ## END
 
 # Creating maps
@@ -373,7 +414,8 @@ improved_res <- reactive({
   res <- inla(formula,
               family = "poisson", data = chsadf_inla,
               E = exp, control.predictor = list(compute = TRUE),
-              control.compute = list(dic = TRUE)
+              control.compute = list(dic = TRUE, cpo = T, config = T),
+              control.inla = list(strategy = "laplace", npoints = 21)
   )
 
   res_improved <- inla.hyperpar(res, dz = 0.2, diff.logdens = 20)
@@ -383,7 +425,8 @@ improved_res <- reactive({
     res <- inla(formula_bym,
                 family = "poisson", data = chsadf_inla,
                 E = exp, control.predictor = list(compute = TRUE),
-                control.compute = list(dic = TRUE)
+                control.compute = list(dic = TRUE, cpo = T, config = T),
+                control.inla = list(strategy = "laplace", npoints = 21)
     )
 
     unstructured_effect <-
@@ -525,6 +568,7 @@ improved_res <- reactive({
         }
   })
 
+  # Variable #2 map
   output$var_map2 <- renderTmap({
     map_df_sf <- map_test()
 
@@ -600,6 +644,7 @@ improved_res <- reactive({
         }
   })
 
+  #Calculating the spatial effect
   output$spatial_effect <- renderUI({
 
     #INLA
@@ -620,6 +665,7 @@ improved_res <- reactive({
     }
   })
 
+  #calculating how many cases are in excess among elevated areas
   output$excess_table <- renderText({
 
     #INLA
@@ -644,6 +690,32 @@ improved_res <- reactive({
     } else {
       paste("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown.")
     }
+  })
+
+  #Model diagnostics: CPO plot
+  output$cpo_plot <- renderPlot({
+    if(input$spatial_choice == "No"){
+    } else{
+
+    n <- datasetInput() %>% nrow
+    result <- test_diagnostics()
+    plot(1:n, result$cpo$cpo, ylab="CPO",type="n")
+    text(1:n, result$cpo$cpo, 1:n)}
+  })
+
+
+  #Model diagnostics: PIT plot
+  output$pit_plot <- renderPlot({
+    if(input$spatial_choice == "No"){
+    } else{
+      n <- datasetInput() %>% nrow
+      result <- test_diagnostics()
+    pit <- result$cpo$pit
+    uniquant <- (1:n)/(n+1)
+    plot(logit(uniquant), logit(sort(pit)), xlab="uniform quantiles", ylab="Sorted PIT values", main="Logit scale")
+    abline(0,1)
+    }
+
   })
 
 }
