@@ -255,16 +255,63 @@ server <- function(input, output, session) {
     mydatain %>%
       filter(cancer == input$cancer_var,
              sex == input$sex_var)
-
   })
 
   #Creating a reactive that analyzes data depending on whether data will be spatially modelled or not
-test <- reactive({
 
+#here is our inla result... use bindCache to run this once and improve app performance
+inla_rv <-
+  reactive({
     mytable <- datasetInput()
+    if(input$spatial_choice == "No"){
+      mytable
+    }
+    else{
+      if(input$model_choice == "bym2"){
+        chsadf_inla <-
+          mytable %>%
+          mutate(idareau = 1:(mytable %>% nrow),
+                 idareav = 1:(mytable %>% nrow),
+                 idarea = 1:(mytable %>% nrow))
+
+        inla(formula,
+                    family = "poisson", data = chsadf_inla,
+                    E = exp, control.predictor = list(compute = TRUE),
+                    control.compute = list(dic = TRUE, cpo = T, config = T),
+                    control.inla = list(strategy = "laplace", npoints = 21)
+        )
+      } else{
+        chsadf_inla <-
+          mytable %>%
+          mutate(idareau = 1:(mytable %>% nrow),
+                 idareav = 1:(mytable %>% nrow),
+                 idarea = 1:(mytable %>% nrow))
+
+        res <- inla(formula_bym,
+                    family = "poisson", data = chsadf_inla,
+                    E = exp, control.predictor = list(compute = TRUE),
+                    control.compute = list(dic = TRUE, cpo = T, config = T),
+                    control.inla = list(strategy = "laplace", npoints = 21)
+        )
+      }
+    }
+
+  }) %>%
+  bindCache(input$spatial_choice, input$model_choice, datasetInput())
+
+test <-
+  reactive({
+
+    chsadf_inla <-
+      datasetInput() %>%
+      mutate(idareau = 1:(mytable %>% nrow),
+             idareav = 1:(mytable %>% nrow),
+             idarea = 1:(mytable %>% nrow))
+
     #When spatial model is "No", users can still examine SIR and case values
     if(input$spatial_choice == "No"){
-      mytable %>%
+      # mytable %>%
+      inla_rv() %>%
         mutate(
           exp = round(exp,0),
           sir = round(sir,2),
@@ -277,18 +324,19 @@ test <- reactive({
       #When Spatial model is "Yes", we can use inla to estimate risk
       #INLA
       if(input$model_choice == "bym2"){
-        chsadf_inla <-
-          mytable %>%
-          mutate(idareau = 1:(mytable %>% nrow),
-                 idareav = 1:(mytable %>% nrow),
-                 idarea = 1:(mytable %>% nrow))
-
-        res <- inla(formula,
-                    family = "poisson", data = chsadf_inla,
-                    E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE, cpo = T, config = T),
-                    control.inla = list(strategy = "laplace", npoints = 21)
-        )
+        # chsadf_inla <-
+        #   mytable %>%
+        #   mutate(idareau = 1:(mytable %>% nrow),
+        #          idareav = 1:(mytable %>% nrow),
+        #          idarea = 1:(mytable %>% nrow))
+        #
+        # res <- inla(formula,
+        #             family = "poisson", data = chsadf_inla,
+        #             E = exp, control.predictor = list(compute = TRUE),
+        #             control.compute = list(dic = TRUE, cpo = T, config = T),
+        #             control.inla = list(strategy = "laplace", npoints = 21)
+        # )
+        res <- inla_rv()
 
         exc <- sapply(res$marginals.fitted.values,
                       FUN = function(marg){1 - inla.pmarginal(q = input$threshold, marginal = marg)})
@@ -309,18 +357,19 @@ test <- reactive({
           rename(SIR = sir)
 
       } else{
-        chsadf_inla <-
-          mytable %>%
-          mutate(idareau = 1:(mytable %>% nrow),
-                 idareav = 1:(mytable %>% nrow),
-                 idarea = 1:(mytable %>% nrow))
-
-        res <- inla(formula_bym,
-                    family = "poisson", data = chsadf_inla,
-                    E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE, cpo = T, config = T),
-                    control.inla = list(strategy = "laplace", npoints = 21)
-        )
+        # chsadf_inla <-
+        #   mytable %>%
+        #   mutate(idareau = 1:(mytable %>% nrow),
+        #          idareav = 1:(mytable %>% nrow),
+        #          idarea = 1:(mytable %>% nrow))
+        #
+        # res <- inla(formula_bym,
+        #             family = "poisson", data = chsadf_inla,
+        #             E = exp, control.predictor = list(compute = TRUE),
+        #             control.compute = list(dic = TRUE, cpo = T, config = T),
+        #             control.inla = list(strategy = "laplace", npoints = 21)
+        # )
+        res <- inla_rv()
 
         exc <- sapply(res$marginals.fitted.values,
                       FUN = function(marg){1 - inla.pmarginal(q = input$threshold, marginal = marg)})
@@ -346,43 +395,43 @@ test <- reactive({
   })
 
 # For model diagnostics, we have to run the model like in test, but just get to the model result
-test_diagnostics <- reactive({
-
-  mytable <- datasetInput()
-  #When spatial model is "No", users can still examine SIR and case values
-    if(input$model_choice == "bym2"){
-      chsadf_inla <-
-        mytable %>%
-        mutate(idareau = 1:(mytable %>% nrow),
-               idareav = 1:(mytable %>% nrow),
-               idarea = 1:(mytable %>% nrow))
-
-      res <- inla(formula,
-                  family = "poisson", data = chsadf_inla,
-                  E = exp, control.predictor = list(compute = TRUE),
-                  control.compute = list(dic = TRUE, cpo = T, config = T),
-                  control.inla = list(strategy = "laplace", npoints = 21)
-      )
-
-      res
-
-    } else{
-      chsadf_inla <-
-        mytable %>%
-        mutate(idareau = 1:(mytable %>% nrow),
-               idareav = 1:(mytable %>% nrow),
-               idarea = 1:(mytable %>% nrow))
-
-      res <- inla(formula_bym,
-                  family = "poisson", data = chsadf_inla,
-                  E = exp, control.predictor = list(compute = TRUE),
-                  control.compute = list(dic = TRUE, cpo = T, config = T),
-                  control.inla = list(strategy = "laplace", npoints = 21)
-      )
-      res
-    }
-
-})
+# test_diagnostics <- reactive({
+#
+#   mytable <- datasetInput()
+#   #When spatial model is "No", users can still examine SIR and case values
+#     if(input$model_choice == "bym2"){
+#       chsadf_inla <-
+#         mytable %>%
+#         mutate(idareau = 1:(mytable %>% nrow),
+#                idareav = 1:(mytable %>% nrow),
+#                idarea = 1:(mytable %>% nrow))
+#
+#       res <- inla(formula,
+#                   family = "poisson", data = chsadf_inla,
+#                   E = exp, control.predictor = list(compute = TRUE),
+#                   control.compute = list(dic = TRUE, cpo = T, config = T),
+#                   control.inla = list(strategy = "laplace", npoints = 21)
+#       )
+#
+#       res
+#
+#     } else{
+#       chsadf_inla <-
+#         mytable %>%
+#         mutate(idareau = 1:(mytable %>% nrow),
+#                idareav = 1:(mytable %>% nrow),
+#                idarea = 1:(mytable %>% nrow))
+#
+#       res <- inla(formula_bym,
+#                   family = "poisson", data = chsadf_inla,
+#                   E = exp, control.predictor = list(compute = TRUE),
+#                   control.compute = list(dic = TRUE, cpo = T, config = T),
+#                   control.inla = list(strategy = "laplace", npoints = 21)
+#       )
+#       res
+#     }
+#
+# })
   ## END
 
 # Creating maps
@@ -411,23 +460,25 @@ improved_res <- reactive({
            idarea = 1:(mytable %>% nrow))
   if(input$model_choice == "bym2"){
 
-  res <- inla(formula,
-              family = "poisson", data = chsadf_inla,
-              E = exp, control.predictor = list(compute = TRUE),
-              control.compute = list(dic = TRUE, cpo = T, config = T),
-              control.inla = list(strategy = "laplace", npoints = 21)
-  )
+  # res <- inla(formula,
+  #             family = "poisson", data = chsadf_inla,
+  #             E = exp, control.predictor = list(compute = TRUE),
+  #             control.compute = list(dic = TRUE, cpo = T, config = T),
+  #             control.inla = list(strategy = "laplace", npoints = 21)
+  # )
+    res <- inla_rv()
 
   res_improved <- inla.hyperpar(res, dz = 0.2, diff.logdens = 20)
 
   res_improved$summary.hyperpar$mean[2]} else{
 
-    res <- inla(formula_bym,
-                family = "poisson", data = chsadf_inla,
-                E = exp, control.predictor = list(compute = TRUE),
-                control.compute = list(dic = TRUE, cpo = T, config = T),
-                control.inla = list(strategy = "laplace", npoints = 21)
-    )
+    res <- inla_rv()
+    #   inla(formula_bym,
+    #             family = "poisson", data = chsadf_inla,
+    #             E = exp, control.predictor = list(compute = TRUE),
+    #             control.compute = list(dic = TRUE, cpo = T, config = T),
+    #             control.inla = list(strategy = "laplace", npoints = 21)
+    # )
 
     unstructured_effect <-
       res$internal.marginals.hyperpar[[1]]
@@ -698,7 +749,7 @@ improved_res <- reactive({
     } else{
 mytable <- datasetInput()
     n <- nrow(mytable)
-    result <- test_diagnostics()
+    result <- inla_rv()
     names <- mytable[, input$area_name_map]
     cpo <- result$cpo$cpo
 
@@ -735,7 +786,7 @@ mytable <- datasetInput()
       mytable <- datasetInput()
       n <- nrow(mytable)
       uniquant <- (1:n)/(n+1)
-    result <- test_diagnostics()
+    result <- inla_rv()
     names <- mytable[, input$area_name_map]
     pit <- result$cpo$pit
 
@@ -745,6 +796,7 @@ mytable <- datasetInput()
         region_name = names,
         PIT = logit(sort(pit))
       )
+
 
     fig <- plot_ly(data = test, x = ~N, y = ~PIT,
                     # name = ~region_name,
