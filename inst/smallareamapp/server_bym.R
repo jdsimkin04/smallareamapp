@@ -686,12 +686,14 @@ mytable <- datasetInput()
     names <- mytable[, input$area_name_map]
     cpo <- result$cpo$cpo
 
+
     test <-
       tibble(
         N = 1:n,
         region_name = names,
         CPO = cpo
       )
+
 
     fig <- plot_ly(data = test, x = ~N, y = ~CPO,
                    # name = ~region_name,
@@ -704,7 +706,8 @@ mytable <- datasetInput()
                    color = ~CPO, size = ~CPO)
     fig <- fig %>% layout(title = 'CPO Plot',
                           yaxis = list(zeroline = FALSE, title = "CPO"),
-                          xaxis = list(zeroline = FALSE, title = "Regions"))
+                          xaxis = list(zeroline = FALSE, title = "Regions"),
+                          hovermode = "x unified")
 
     fig
     }
@@ -739,14 +742,64 @@ mytable <- datasetInput()
                       "%{yaxis.title.text}: %{y:.2f}<br>",
                       "<extra></extra>"
                     ),
+                   mode = 'markers"',
                     color = ~PIT, size = ~PIT)
     fig <- fig %>% layout(title = 'PIT Plot',
                           yaxis = list(zeroline = FALSE, title = "PIT"),
-                          xaxis = list(zeroline = FALSE, title = "Regions"))
+                          xaxis = list(zeroline = FALSE, title = "Regions"),
+                          hovermode = "x unified")
+
+
+    a <- min(test$PIT)
+    b  <- max(test$PIT)
+
+    fig <- fig %>% layout(
+      shapes=list(type='line', line = list(colour = "black"), x0=min(logit(uniquant)), x1=max(logit(uniquant)), y0=floor(a), y1=ceiling(b))
+    )
 
     fig
     }
 
+  })
+
+  #Model diagnostics: MSPE, which are potential outliers, R^2
+  output$diagnostics_table <- renderText({
+
+    #INLA
+    if(input$spatial_choice == "Yes"){
+      mytable <- datasetInput()
+      res <-
+        inla_rv()
+
+      #MSPE
+      n <- mytable %>% nrow
+      yhat <- mytable$sir
+      ypred <- res$summary.fitted.values[1:n, "mean"]
+
+      mspe <- mean((as.numeric(yhat)-ypred)^2, na.rm=TRUE)
+
+      #R^2
+      linear_data <-
+        tibble(
+          obs=yhat,
+          pred= ypred)
+
+      linear_model_result <-
+        lm(obs ~ pred, data = linear_data)
+
+      rsquar <-
+      summary(linear_model_result)$adj.r.squared
+
+      #Table
+      tibble(
+        Indicator = c("Mean Squared Prediction Error", "Post-Hoc Adjusted R-Squared", "Outliers"),
+        Values = c(1,2,"TBD")
+      ) %>%
+        kable(., format = "html") %>%
+        kable_styling()
+    } else {
+      paste("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown.")
+    }
   })
 
 }

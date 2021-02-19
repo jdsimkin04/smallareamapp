@@ -360,7 +360,7 @@ ui <- bs4DashPage(
             status = "info",
             solidHeader = T,
             collapsible = T,
-            collapsed = T,
+            collapsed = F,
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
@@ -377,7 +377,7 @@ ui <- bs4DashPage(
             status = "info",
             solidHeader = T,
             collapsible = T,
-            collapsed = T,
+            collapsed = F,
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
@@ -400,8 +400,8 @@ ui <- bs4DashPage(
             closable = FALSE,
             labelStatus = "info",
             labelText = "",
-            width = 12
-            #need htmltable
+            width = 12,
+            htmlOutput("diagnostics_table")
           )
         )
       )
