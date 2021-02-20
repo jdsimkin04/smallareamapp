@@ -66,7 +66,7 @@ ui <- bs4DashPage(
     ),
 
     menuItem(
-      "Model diagnostics",
+      "Posterior Predictive Checks",
       tabName = "menu_6",
       icon = icon("glasses")
     )
@@ -356,7 +356,7 @@ ui <- bs4DashPage(
         column(
           6,
           bs4Card(
-            title = "CPO Plot",
+            title = "Conditional predictive ordinate (CPO) Plot",
             status = "info",
             solidHeader = T,
             collapsible = T,
@@ -365,7 +365,8 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            plotlyOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE)
+            plotlyOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE),
+            footer = "The CPO is the probability density of an observed response based on the model fit to the rest of the data. Small CPO values reflect unexpected responses or potential outliers."
 
           )
         ),
@@ -373,7 +374,7 @@ ui <- bs4DashPage(
         column(
           6,
           bs4Card(
-            title = "PIT Plot",
+            title = "Predictive integral transformed Plot",
             status = "info",
             solidHeader = T,
             collapsible = T,
@@ -382,7 +383,8 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            plotlyOutput("pit_plot") %>% withSpinner(hide.ui = FALSE)
+            plotlyOutput("pit_plot") %>% withSpinner(hide.ui = FALSE),
+            footer = "PIT values are plotted on a log scale. The PIT is the probability that a new response is lower than the corresponding observed value. A uniform distribution is expected if the model represents the observations well."
           )
         )
       ),

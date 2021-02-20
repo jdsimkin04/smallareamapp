@@ -704,7 +704,7 @@ mytable <- datasetInput()
                      "<extra></extra>"
                    ),
                    color = ~CPO, size = ~CPO)
-    fig <- fig %>% layout(title = 'CPO Plot',
+    fig <- fig %>% layout(
                           yaxis = list(zeroline = FALSE, title = "CPO"),
                           xaxis = list(zeroline = FALSE, title = "Regions"),
                           hovermode = "x unified")
@@ -742,9 +742,10 @@ mytable <- datasetInput()
                       "%{yaxis.title.text}: %{y:.2f}<br>",
                       "<extra></extra>"
                     ),
-                   mode = 'markers"',
-                    color = ~PIT, size = ~PIT)
-    fig <- fig %>% layout(title = 'PIT Plot',
+                   mode = 'markers',
+                   type = 'scatter',
+                    color = ~PIT)
+    fig <- fig %>% layout(
                           yaxis = list(zeroline = FALSE, title = "PIT"),
                           xaxis = list(zeroline = FALSE, title = "Regions"),
                           hovermode = "x unified")
@@ -792,8 +793,8 @@ mytable <- datasetInput()
 
       #Table
       tibble(
-        Indicator = c("Mean Squared Prediction Error", "Post-Hoc Adjusted R-Squared", "Outliers"),
-        Values = c(1,2,"TBD")
+        Indicator = c("Mean Squared Prediction Error", "Post-Hoc Adjusted R-Squared", "Potential Outliers"),
+        Values = c(round(mspe,4), round(rsquar,4),"TBD")
       ) %>%
         kable(., format = "html") %>%
         kable_styling()
