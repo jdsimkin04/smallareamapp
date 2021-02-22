@@ -28,7 +28,7 @@ server <- function(input, output, session) {
   ## When users click the "analytics" menu, the control bar pops out
   observeEvent(input$sidebarMenu, {
     idx <- strsplit(input$sidebarMenu, "_")[[1]][2]
-    if (idx %in% c(5,6)) {
+    if (idx %in% c(5,6,7)) {
       updateControlbar("controlbar")
     }
     })
@@ -677,42 +677,94 @@ improved_res <- reactive({
   })
 
   #Model diagnostics: CPO plot
-  output$cpo_plot <- renderPlotly({
+#   output$cpo_plot <- renderPlotly({
+#     if(input$spatial_choice == "No"){
+#     } else{
+# mytable <- datasetInput()
+#     n <- nrow(mytable)
+#     result <- inla_rv()
+#     names <- mytable[, input$area_name_map]
+#     cpo <- result$cpo$cpo
+#
+#
+#     test <-
+#       tibble(
+#         N = 1:n,
+#         region_name = names,
+#         CPO = cpo
+#       )
+#
+#
+#     fig <- plot_ly(data = test, x = ~N, y = ~CPO,
+#                    # name = ~region_name,
+#                    text = ~region_name,
+#                    hovertemplate = paste(
+#                      "<b>%{text}</b><br>",
+#                      "%{yaxis.title.text}: %{y:.2f}<br>",
+#                      "<extra></extra>"
+#                    ),
+#                    color = ~CPO, size = ~CPO)
+#     fig <- fig %>% layout(
+#                           yaxis = list(zeroline = FALSE, title = "CPO"),
+#                           xaxis = list(zeroline = FALSE, title = "Regions"),
+#                           hovermode = "x unified")
+#
+#     fig
+#     }
+#   })
+
+  #Model diagnostics: Observed vs. Fitted values
+  output$pred_plot <- renderPlotly({
     if(input$spatial_choice == "No"){
     } else{
-mytable <- datasetInput()
-    n <- nrow(mytable)
-    result <- inla_rv()
-    names <- mytable[, input$area_name_map]
-    cpo <- result$cpo$cpo
+      mytable <- datasetInput()
+      result <- inla_rv()
 
+      post_pred <-
+        tibble(obs = mytable$sir,
+               pred = result$summary.fitted.values$mean,
+               name = mytable[, input$area_name_map])
 
-    test <-
-      tibble(
-        N = 1:n,
-        region_name = names,
-        CPO = cpo
-      )
+      linear_model_result <-
+        lm(obs ~ pred, data = post_pred)
 
+      rsquar <-
+        summary(linear_model_result)$adj.r.squared
 
-    fig <- plot_ly(data = test, x = ~N, y = ~CPO,
-                   # name = ~region_name,
-                   text = ~region_name,
-                   hovertemplate = paste(
-                     "<b>%{text}</b><br>",
-                     "%{yaxis.title.text}: %{y:.2f}<br>",
-                     "<extra></extra>"
-                   ),
-                   color = ~CPO, size = ~CPO)
-    fig <- fig %>% layout(
-                          yaxis = list(zeroline = FALSE, title = "CPO"),
-                          xaxis = list(zeroline = FALSE, title = "Regions"),
-                          hovermode = "x unified")
-
-    fig
+      #Plotly build
+      post_pred %>%
+        plot_ly(data = ., x = ~obs, y = ~pred, type = 'scatter', mode = 'markers',
+                text = ~name,
+                hovertemplate = paste0("<b>%{text}</b><br>",
+                                    "<b>SIR</b>: %{x.2f}<br>",
+                                    "<b>RR</b>: %{y.2f}<br>",
+                                    "<extra></extra>"),
+                marker = list(size = 6,
+                              line = list(color = 'black',
+                                          width = 1))
+        ) %>%
+        layout(title = 'Observed vs. Fitted values',
+               yaxis = list(title = "<b>Fitted RR<b>"),
+               xaxis = list(title = "<b>Observed SIR<b>"),
+               margin = list(b=100),
+               annotations = list(x = 1, y = -0.25, #position of text adjust as needed
+                                  text = paste("Adujsted R-Squared =", round(rsquar,2)), showarrow = F,
+                                  xref='paper', yref='paper',
+                                  xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                                  font=list(size=15, color="black"))) %>%
+        layout(
+          shapes=list(type='line',
+                      line = list(dash = "dash",
+                                  opacity = 0.5),
+                      x0=0,
+                      x1=ceiling(max(post_pred %$% obs)),
+                      y0=0,
+                      y1=ceiling(max(post_pred %$% obs))
+          )
+        )
     }
-  })
 
+  })
 
   #Model diagnostics: PIT plot
   output$pit_plot <- renderPlotly({
@@ -737,7 +789,7 @@ mytable <- datasetInput()
     fig <- plot_ly(data = test, x = ~N, y = ~PIT,
                     # name = ~region_name,
                     text = ~region_name,
-                    hovertemplate = paste(
+                    hovertemplate = paste0(
                       "<b>%{text}</b><br>",
                       "%{yaxis.title.text}: %{y:.2f}<br>",
                       "<extra></extra>"
@@ -747,8 +799,7 @@ mytable <- datasetInput()
                     color = ~PIT)
     fig <- fig %>% layout(
                           yaxis = list(zeroline = FALSE, title = "PIT"),
-                          xaxis = list(zeroline = FALSE, title = "Regions"),
-                          hovermode = "x unified")
+                          xaxis = list(zeroline = FALSE, title = "Regions"))
 
 
     a <- min(test$PIT)
@@ -759,6 +810,49 @@ mytable <- datasetInput()
     )
 
     fig
+    }
+
+  })
+
+  #Model diagnostics: Alternative PIT plot
+  output$alt_pit_plot <- renderPlot({
+    if(input$spatial_choice == "No"){
+    } else{
+
+      mytable <- datasetInput()
+      n <- nrow(mytable)
+      uniquant <- (1:n)/(n+1)
+      result <- inla_rv()
+      names <- mytable[, input$area_name_map]
+      pit <- result$cpo$pit
+
+      tibble(
+        pit = pit,
+        n = 1:n,
+      ) %>% ggplot(., aes(x = pit)) +
+        geom_density() +
+        labs(x = "CFD",
+              y = "Density") +
+        theme_bw()
+
+
+      # fig <- plot_ly(data = test, x = ~N, y = ~PIT,
+      #                # name = ~region_name,
+      #                text = ~region_name,
+      #                hovertemplate = paste(
+      #                  "<b>%{text}</b><br>",
+      #                  "%{yaxis.title.text}: %{y:.2f}<br>",
+      #                  "<extra></extra>"
+      #                ),
+      #                mode = 'markers',
+      #                type = 'scatter',
+      #                color = ~PIT)
+      # fig <- fig %>% layout(
+      #   yaxis = list(zeroline = FALSE, title = "PIT"),
+      #   xaxis = list(zeroline = FALSE, title = "Regions"),
+      #   hovermode = "x unified")
+
+      # fig
     }
 
   })
@@ -793,8 +887,10 @@ mytable <- datasetInput()
 
       #Table
       tibble(
-        Indicator = c("Mean Squared Prediction Error", "Post-Hoc Adjusted R-Squared", "Potential Outliers"),
-        Values = c(round(mspe,4), round(rsquar,4),"TBD")
+        Indicator = c("Mean Squared Prediction Error", "Post-Hoc Adjusted R-Squared"#, "Potential Outliers"
+                      ),
+        Values = c(round(mspe,4), round(rsquar,4)#,"TBD"
+                   )
       ) %>%
         kable(., format = "html") %>%
         kable_styling()
@@ -802,5 +898,105 @@ mytable <- datasetInput()
       paste("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown.")
     }
   })
+
+  #spatial autocorrelation: Moran's Density Plot
+  output$morans_plot <- renderPlot({
+    if(input$spatial_choice == "No"){
+    } else{
+      mytable <- datasetInput()
+      map_df_sf <-
+        map() %>%
+        left_join(., datasetInput(), by = input$area_name_map)
+
+      nb <- poly2nb(map_df_sf)
+      lw <- nb2listw(nb, style="W", zero.policy=TRUE)
+      # Moran's I test MC simulations
+      MC <-
+        moran.mc(map_df_sf$sir, lw, nsim=599)
+
+      df <-
+        tibble(I = MC$res)
+
+      MC_result <-
+        if(MC$p.value < 0.05){
+          "Spatial autocorrelation is present"} else{
+            "Spatial autocorrelation is not present"}
+
+      MC_result2 <-
+        if(MC$p.value < 0.05 & MC$statistic > 0){
+          " and SIRs are clustered."} else if(
+            MC$p.value < 0.05 & MC$statistic < 0){
+            " and SIRs are dispersed."}else{
+              " and SIRs are distributed at random."}
+
+      ggplot(df, aes(x = I)) +
+        geom_density(fill = "grey") +
+        geom_vline(xintercept = MC$statistic, col = "black", size = 2) +
+        labs(
+          title = "Simulated Moran's I",
+          subtitle = paste0(MC_result, MC_result2),
+          x = "Moran's I",
+          y = "Density",
+          caption = paste0(
+            "Moran's I = ", round(MC$statistic,4),
+            "\np-value = ", round(MC$p.value, 4)
+        )) +
+        theme_bw(base_size = 14) +
+        theme(
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()
+        )
+
+    }
+
+  })
+
+  #Spatial autocorrelation: Moran's scatterplot
+  output$lmorans_plot <- renderPlotly({
+    if(input$spatial_choice == "No"){
+    } else{
+      mytable <- datasetInput()
+      map_df_sf <-
+        map() %>%
+        left_join(., datasetInput(), by = input$area_name_map)
+
+      nb <- poly2nb(map_df_sf)
+      lw <- nb2listw(nb, style="W", zero.policy=TRUE)
+      MC <-
+        moran.mc(map_df_sf$sir, lw, nsim=599)
+      lmoran <-
+        localmoran(map_df_sf$sir, lw,
+                   alternative = "greater")
+
+      # standardize and center the variable and save it to a new column
+      map_df_sf$s_sir <- scale(map_df_sf$sir)  %>% as.vector()
+
+      # create a spatially lagged variable and save it to a new column
+      map_df_sf$lag_s_sir <- lag.listw(lw, map_df_sf$s_sir)
+
+      # high-high quadrant
+
+      map_df_sf %>%
+        st_drop_geometry() %>%
+        plot_ly(data = ., x = ~s_sir, y = ~lag_s_sir, type = 'scatter', mode = 'markers',
+                text = ~NAME,
+                hovertemplate = paste('<b>%{text}</b>'),
+                marker = list(size = 6,
+                              line = list(color = 'black',
+                                          width = 1))
+        ) %>%
+        layout(title = 'Moran Scatterplot',
+               yaxis = list(title = "<b>Lagged SIR<b>"),
+               xaxis = list(title = "<b>*SIR<b>")) %>% layout(
+                 shapes=list(type='line',
+                             x0=min(map_df_sf %>% st_drop_geometry() %$% s_sir),
+                             x1=max(map_df_sf %>% st_drop_geometry() %$% s_sir),
+                             y0=(MC$statistic[[1]]*min(map_df_sf %>% st_drop_geometry() %$% s_sir)),
+                             y1=(MC$statistic[[1]]*max(map_df_sf %>% st_drop_geometry() %$% s_sir)))
+               )
+    }
+
+  })
+
 
 }

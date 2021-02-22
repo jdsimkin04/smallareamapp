@@ -55,20 +55,26 @@ ui <- bs4DashPage(
       menuSubItem(
         "Geography shapefile",
         tabName = "menu_4",
-        icon = NULL,
+        icon = NULL
       )
     ),
 
     menuItem(
       "Analytics",
+      tabName = "pre_menu_5",
+      icon = icon("chart-bar"),
+      menuSubItem(
+        "Spatial modeling",
       tabName = "menu_5",
-      icon = icon("chart-bar")
-    ),
-
-    menuItem(
-      "Posterior Predictive Checks",
-      tabName = "menu_6",
-      icon = icon("glasses")
+      icon = NULL),
+      menuSubItem(
+        "Posterior predictive checks",
+        tabName = "menu_6",
+        icon = NULL),
+      menuSubItem(
+        "Spatial autocorrelation",
+        tabName = "menu_7",
+        icon = NULL)
     )
   ),
   actionButton("map1", " Snapshot map #1", status = "secondary", size = "sm", icon = icon("camera-retro")),
@@ -353,10 +359,27 @@ ui <- bs4DashPage(
       tabName = "menu_6",
       fluidRow(
         #Card for mapping variable #1, default relative risk
+        # column(
+        #   6,
+        #   bs4Card(
+        #     title = "Conditional predictive ordinate (CPO) Plot",
+        #     status = "info",
+        #     solidHeader = T,
+        #     collapsible = T,
+        #     collapsed = F,
+        #     closable = FALSE,
+        #     labelStatus = "info",
+        #     labelText = "",
+        #     width = 12,
+        #     plotlyOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE),
+        #     footer = "The CPO is the probability density of an observed response based on the model fit to the rest of the data. Small CPO values reflect unexpected responses or potential outliers."
+        #
+        #   )
+        # ),
         column(
           6,
           bs4Card(
-            title = "Conditional predictive ordinate (CPO) Plot",
+            title = "Fitted vs. Observed values",
             status = "info",
             solidHeader = T,
             collapsible = T,
@@ -365,8 +388,8 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            plotlyOutput("cpo_plot") %>% withSpinner(hide.ui = FALSE),
-            footer = "The CPO is the probability density of an observed response based on the model fit to the rest of the data. Small CPO values reflect unexpected responses or potential outliers."
+            plotlyOutput("pred_plot") %>% withSpinner(hide.ui = FALSE),
+            footer = "Scatterplot for the observed versus  predicted risk obtained from the BYM2 model."
 
           )
         ),
@@ -405,10 +428,67 @@ ui <- bs4DashPage(
             width = 12,
             htmlOutput("diagnostics_table")
           )
+        ),
+        column(
+          6,
+          bs4Card(
+            title = "Alternative PIT CFD Plot",
+            status = "info",
+            solidHeader = T,
+            collapsible = T,
+            collapsed = T,
+            closable = FALSE,
+            labelStatus = "info",
+            labelText = "",
+            width = 12,
+            plotOutput("alt_pit_plot") %>% withSpinner(hide.ui = FALSE),
+            footer = "PIT values are plotted as a cumulative density function. The PIT is the probability that a new response is lower than the corresponding observed value. We would expect a somewhat uniform CFD line."
+          )
         )
       )
-    )
+    ),
+    bs4TabItem(
+      tabName = "menu_7",
+      fluidRow(
+        #Moran's density plot
+        column(
+          6,
+          bs4Card(
+            title = "Moran's I test",
+            status = "info",
+            solidHeader = T,
+            collapsible = T,
+            collapsed = F,
+            closable = FALSE,
+            labelStatus = "info",
+            labelText = "",
+            width = 12,
+            plotOutput("morans_plot") %>% withSpinner(hide.ui = FALSE),
+            footer = "Testing the null hypothesis that there is no spatial autocorrelation using the Moran's test for global autocorrelation. The area under the curve represents the reference distirbution for the Moran's I derived from MC simulations.
+Vertical black line represents the Moran's I for the actual data."
+
+          )
+        ),
+        #Local moran's scatterplot
+        column(
+          6,
+          bs4Card(
+            title = "Moran's scatterplot",
+            status = "info",
+            solidHeader = T,
+            collapsible = T,
+            collapsed = F,
+            closable = FALSE,
+            labelStatus = "info",
+            labelText = "",
+            width = 12,
+            plotlyOutput("lmorans_plot") %>% withSpinner(hide.ui = FALSE),
+            footer = "*SIR has been scaled and centered."
+          )
+        )
       )
+      )
+    )
     ),
   footer = dashboardFooter()
   )
