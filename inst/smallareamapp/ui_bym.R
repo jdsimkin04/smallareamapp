@@ -194,10 +194,7 @@ ui <- bs4DashPage(
           width = 12,
           "Upload data with the area name, cases, expected cases, and population size.",
           br(),
-          strong("IMPORTANT!: "), em("Your csv file MUST have the same headers the table in the preview tab!"),
-          br(),
-          strong("Column headers below ('*' require data, other's can be left blank):"),
-          br(),
+          strong("IMPORTANT!: "), em("Your csv file MUST have the same headers as the table in the preview tab!"),
           br(),
           fluidRow(
             #Columns for the data table to be uploaded
