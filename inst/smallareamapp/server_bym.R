@@ -736,8 +736,8 @@ improved_res <- reactive({
         plot_ly(data = ., x = ~obs, y = ~pred, type = 'scatter', mode = 'markers',
                 text = ~name,
                 hovertemplate = paste0("<b>%{text}</b><br>",
-                                    "<b>SIR</b>: %{x.2f}<br>",
-                                    "<b>RR</b>: %{y.2f}<br>",
+                                    "<b>SIR</b>: %{x:.2f}<br>",
+                                    "<b>RR</b>: %{y:.2f}<br>",
                                     "<extra></extra>"),
                 marker = list(size = 6,
                               line = list(color = 'black',
@@ -978,6 +978,7 @@ improved_res <- reactive({
 
       map_df_sf %>%
         st_drop_geometry() %>%
+        rename("NAME" = input$area_name_map) %>%
         plot_ly(data = ., x = ~s_sir, y = ~lag_s_sir, type = 'scatter', mode = 'markers',
                 text = ~NAME,
                 hovertemplate = paste('<b>%{text}</b>'),
