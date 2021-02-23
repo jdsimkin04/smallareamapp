@@ -313,6 +313,7 @@ ui <- bs4DashPage(
           labelStatus = "info",
           labelText = "",
           width = 12,
+          background = "white",
           DT::dataTableOutput("table1") %>% withSpinner(hide.ui = FALSE)
         )
       ),
