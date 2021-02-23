@@ -806,7 +806,10 @@ improved_res <- reactive({
     b  <- max(test$PIT)
 
     fig <- fig %>% layout(
-      shapes=list(type='line', line = list(colour = "black"), x0=min(logit(uniquant)), x1=max(logit(uniquant)), y0=floor(a), y1=ceiling(b))
+      shapes=list(type='line',
+                  line = list(colour = "black",
+                              dash = "dash",
+                              opacity = 0.5), x0=min(logit(uniquant)), x1=max(logit(uniquant)), y0=min(logit(uniquant)), y1=max(logit(uniquant)))
     )
 
     fig
