@@ -405,7 +405,7 @@ improved_res <- reactive({
 
     res <- inla_rv()
 
-  res_improved <- inla.hyperpar(res, dz = 0.2, diff.logdens = 20)
+  res_improved <- inla.hyperpar(res)
 
   res_improved$summary.hyperpar$mean[2]} else{
 
@@ -424,7 +424,7 @@ improved_res <- reactive({
     x_u/(x_v+x_u)
   }
 }) %>%
-  bindCache(datasetInput(), inla_rv())
+  bindCache(datasetInput(), inla_rv(), input$model_choice)
 
 ## End
 
