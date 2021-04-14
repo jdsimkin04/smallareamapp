@@ -115,6 +115,7 @@ server <- function(input, output, session) {
                       choices = unique(data()$cancer),
                       selected = unique(data()$cancer)[1])
   })
+
   ## End
 
 # Update the data preview data table in the upload section
@@ -479,7 +480,7 @@ improved_res <- reactive({
   output$var_map <- renderTmap({
 
     map_df_sf <- map_test()
-
+if(input$map_style1 == "fixed"){
     if(input$variable_var == "SIR"){
       tm_shape(map_df_sf) +
         tm_polygons(col = input$variable_var,
@@ -487,10 +488,9 @@ improved_res <- reactive({
                     title = input$variable_var,
                     border.col = "white",
                     lwd = 0.5,
-                    style = "cont",
-                    # style = "fixed",
-                    n=5,
-                    palette = "Reds",
+                    style = input$map_style1,
+                    breaks = c(seq(input$breaks_min1, input$breaks_max1, input$breaks_step1), Inf),
+                    palette = input$map_palette1,
                     popup.vars = c(
                       "Cases: " = "cases",
                       "Expected: " = "exp",
@@ -507,10 +507,9 @@ improved_res <- reactive({
                         title = input$variable_var,
                         border.col = "white",
                         lwd = 0.5,
-                        style = "cont",
-                        # style = "fixed",
-                        n=5,
-                        palette = "Reds",
+                        style = input$map_style1,
+                        breaks = c(seq(input$breaks_min1, input$breaks_max1, input$breaks_step1), Inf),
+                        palette = input$map_palette1,
                         popup.vars = c(
                           "Cases: " = "cases",
                           "Expected: " = "exp",
@@ -524,10 +523,9 @@ improved_res <- reactive({
                         title = "Exceedance Probability",
                         border.col = "white",
                         lwd = 0.5,
-                        style = "cont",
-                        # style = "fixed",
-                        n=5,
-                        palette = "Reds",
+                        style = input$map_style1,
+                        breaks = c(seq(input$breaks_min1, input$breaks_max1, input$breaks_step1), Inf),
+                        palette = input$map_palette1,
                         popup.vars = c(
                           "Cases: " = "cases",
                           "Expected: " = "exp",
@@ -541,20 +539,90 @@ improved_res <- reactive({
                         title = input$variable_var,
                         border.col = "white",
                         lwd = 0.5,
-                        style = "cont",
-                        # style = "fixed",
-                        n=5,
-                        palette = "Reds",
+                        style = input$map_style1,
+                        breaks = c(seq(input$breaks_min1, input$breaks_max1, input$breaks_step1), Inf),
+                        palette = input$map_palette1,
                         popup.vars = c(
                           "Cases: " = "cases",
                           "Expected: " = "exp",
                           "Population: " = "area_pop"))
         }
+} else{
+  if(input$variable_var == "SIR"){
+    tm_shape(map_df_sf) +
+      tm_polygons(col = input$variable_var,
+                  id = input$area_name_map,
+                  title = input$variable_var,
+                  border.col = "white",
+                  lwd = 0.5,
+                  style = input$map_style1,
+                  n = input$bins1,
+                  palette = input$map_palette1,
+                  popup.vars = c(
+                    "Cases: " = "cases",
+                    "Expected: " = "exp",
+                    "SIR: " = "SIR",
+                    "95% CIs: " = "cis")) +
+      tm_layout(
+        frame = F,
+        legend.title.size = 1.2,
+        legend.text.size = 1
+      )} else if(input$variable_var == "RR"){
+        tm_shape(map_df_sf) +
+          tm_polygons(col = input$variable_var,
+                      id = input$area_name_map,
+                      title = input$variable_var,
+                      border.col = "white",
+                      lwd = 0.5,
+                      style = input$map_style1,
+                      n = input$bins1,
+                      palette = input$map_palette1,
+                      popup.vars = c(
+                        "Cases: " = "cases",
+                        "Expected: " = "exp",
+                        "RR: " = "RR",
+                        "95% CrIs: " = "cris",
+                        "Exceedance Prob: " = "exc"))
+      } else if(input$variable_var == "exc"){
+        tm_shape(map_df_sf) +
+          tm_polygons(col = "exc",
+                      id = input$area_name_map,
+                      title = "Exceedance Probability",
+                      border.col = "white",
+                      lwd = 0.5,
+                      style = input$map_style1,
+                      n = input$bins1,
+                      palette = input$map_palette1,
+                      popup.vars = c(
+                        "Cases: " = "cases",
+                        "Expected: " = "exp",
+                        "RR: " = "RR",
+                        "95% CrIs: " = "cris",
+                        "Exceedance Prob: " = "exc"))
+      } else{
+        tm_shape(map_df_sf) +
+          tm_polygons(col = input$variable_var,
+                      id = input$area_name_map,
+                      title = input$variable_var,
+                      border.col = "white",
+                      lwd = 0.5,
+                      style = input$map_style1,
+                      n = input$bins1,
+                      palette = input$map_palette1,
+                      popup.vars = c(
+                        "Cases: " = "cases",
+                        "Expected: " = "exp",
+                        "Population: " = "area_pop"))
+      }
+}
+
   })
 
   # Variable #2 map
   output$var_map2 <- renderTmap({
     map_df_sf <- map_test()
+
+    if(input$map_style2 == "fixed"){
 
     if(input$variable_var2 == "SIR"){
       tm_shape(map_df_sf) +
@@ -563,10 +631,9 @@ improved_res <- reactive({
                     title = input$variable_var2,
                     border.col = "white",
                     lwd = 0.5,
-                    style = "cont",
-                    # style = "fixed",
-                    n=5,
-                    palette = "Reds",
+                    style = input$map_style2,
+                    breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+                    palette = input$map_palette2,
                     popup.vars = c(
                       "Cases: " = "cases",
                       "Expected: " = "exp",
@@ -583,10 +650,9 @@ improved_res <- reactive({
                         title = input$variable_var2,
                         border.col = "white",
                         lwd = 0.5,
-                        style = "cont",
-                        # style = "fixed",
-                        n=5,
-                        palette = "Reds",
+                        style = input$map_style2,
+                        breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+                        palette = input$map_palette2,
                         popup.vars = c(
                           "Cases: " = "cases",
                           "Expected: " = "exp",
@@ -600,10 +666,9 @@ improved_res <- reactive({
                         title = "Exceedance Probability",
                         border.col = "white",
                         lwd = 0.5,
-                        style = "cont",
-                        # style = "fixed",
-                        n=5,
-                        palette = "Reds",
+                        style = input$map_style2,
+                        breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+                        palette = input$map_palette2,
                         popup.vars = c(
                           "Cases: " = "cases",
                           "Expected: " = "exp",
@@ -617,15 +682,83 @@ improved_res <- reactive({
                         title = input$variable_var2,
                         border.col = "white",
                         lwd = 0.5,
-                        style = "cont",
-                        # style = "fixed",
-                        n=5,
-                        palette = "Reds",
+                        style = input$map_style2,
+                        breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+                        palette = input$map_palette2,
                         popup.vars = c(
                           "Cases: " = "cases",
                           "Expected: " = "exp",
                           "Population" = "area_pop"))
         }
+    }
+    else{
+      if(input$variable_var2 == "SIR"){
+        tm_shape(map_df_sf) +
+          tm_polygons(col = input$variable_var2,
+                      id = input$area_name_map,
+                      title = input$variable_var2,
+                      border.col = "white",
+                      lwd = 0.5,
+                      style = input$map_style2,
+                      n = input$bins2,
+                      palette = input$map_palette2,
+                      popup.vars = c(
+                        "Cases: " = "cases",
+                        "Expected: " = "exp",
+                        "SIR: " = "SIR",
+                        "95% CIs: " = "cis")) +
+          tm_layout(
+            frame = F,
+            legend.title.size = 1.2,
+            legend.text.size = 1
+          )} else if(input$variable_var2 == "RR"){
+            tm_shape(map_df_sf) +
+              tm_polygons(col = input$variable_var2,
+                          id = input$area_name_map,
+                          title = input$variable_var2,
+                          border.col = "white",
+                          lwd = 0.5,
+                          style = input$map_style2,
+                          n = input$bins2,
+                          palette = input$map_palette2,
+                          popup.vars = c(
+                            "Cases: " = "cases",
+                            "Expected: " = "exp",
+                            "RR: " = "RR",
+                            "95% CrIs: " = "cris",
+                            "Exceedance Prob: " = "exc"))
+          } else if(input$variable_var2 == "exc"){
+            tm_shape(map_df_sf) +
+              tm_polygons(col = "exc",
+                          id = input$area_name_map,
+                          title = "Exceedance Probability",
+                          border.col = "white",
+                          lwd = 0.5,
+                          style = input$map_style2,
+                          n = input$bins2,
+                          palette = input$map_palette2,
+                          popup.vars = c(
+                            "Cases: " = "cases",
+                            "Expected: " = "exp",
+                            "RR: " = "RR",
+                            "95% CrIs: " = "cris",
+                            "Exceedance Prob: " = "exc"))
+          } else{
+            tm_shape(map_df_sf) +
+              tm_polygons(col = input$variable_var2,
+                          id = input$area_name_map,
+                          title = input$variable_var2,
+                          border.col = "white",
+                          lwd = 0.5,
+                          style = input$map_style2,
+                          n = input$bins2,
+                          palette = input$map_palette2,
+                          popup.vars = c(
+                            "Cases: " = "cases",
+                            "Expected: " = "exp",
+                            "Population" = "area_pop"))
+          }
+    }
   })
 
   #Calculating the spatial effect
@@ -1002,5 +1135,16 @@ improved_res <- reactive({
 
   })
 
+  #Model summary save
+  output$model_summary <- downloadHandler(
+    filename <- function(){
+      paste("smallareamapp_model_summary.RData")
+    },
+
+    content = function(file) {
+      res <- inla_rv()
+      save(res, file = file)
+    }
+  )
 
 }

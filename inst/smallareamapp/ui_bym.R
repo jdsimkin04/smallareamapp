@@ -78,7 +78,11 @@ ui <- bs4DashPage(
     )
   ),
   actionButton("map1", " Snapshot map #1", status = "secondary", size = "sm", icon = icon("camera-retro")),
-  actionButton("map2", " Snapshot map #2", status = "secondary", size = "sm", icon = icon("camera-retro"))
+  actionButton("map2", " Snapshot map #2", status = "secondary", size = "sm", icon = icon("camera-retro")),
+  # actionButton("model_summary", " Download  model results as RData", status = "secondary", size = "sm", icon = icon("download"))
+  downloadButton('model_summary', 'Download Model', class="dlButton")
+
+
   ),
   controlbar = bs4DashControlbar(
     #controlbar settings
@@ -94,13 +98,22 @@ ui <- bs4DashPage(
     selectInput("cancer_var", "Cancer type",""),
     selectInput("sex_var", "Sex", ""),
     p(strong("Bayesian modeling of cases")),
-      selectInput("spatial_choice", "Bayesian spatial Poisson model using INLA?", c("No", "Yes"), selected = "No"),
-      selectInput("model_choice", "Please choose a spatial model fit", c("bym2", "bym"), selected = "bym2"),
+      selectInput("spatial_choice", "Spatial Poisson w/INLA?", c("No", "Yes"), selected = "No"),
+      selectInput("model_choice", "Choose a model", c("bym2", "bym"), selected = "bym2"),
       p("For exceedence probabilities, please specify a threshold"),
       numericInput(inputId = "threshold", label="Relative Risk Threshold", value = 1.10),
-    p("Choose a variable to map"),
-    selectInput("variable_var", "Map #1", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "SIR"),
-    selectInput("variable_var2", "Map #2", c("cases", "exp", "SIR","RR", "exc", "area_pop"), selected = "cases")
+    p("Customize your map"),
+    selectInput("variable_var", "Variable for Map #1", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "SIR"),
+    selectInput("variable_var2", "Variable for Map #2", c("cases", "exp", "SIR","RR", "exc", "area_pop"), selected = "cases")
+    # selectInput("map_style", "Map style", c("fixed", "jenks", "sd", "cont"), selected = "cont"),
+    # conditionalPanel(
+    #   condition = "input.map_style == 'fixed'",
+    #   wellPanel(
+    #   numericInput("breaks_min", "min: ", 1, min = 0, max = NA),
+    #   numericInput("breaks_max", "max: ", 2, min = 0, max = NA),
+    #   numericInput("breaks_step", "step: ", 0.25, min = 0, max = NA)
+    #   )),
+    # selectInput("map_palette", "Palette", c("Reds", "viridis", "RdBu", "Greens"), selected = "Reds")
   ))),
   # Body items
   bs4DashBody(
@@ -279,7 +292,23 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            tmapOutput("var_map", height = 500) %>% withSpinner(hide.ui = FALSE)
+            tmapOutput("var_map", height = 500) %>% withSpinner(hide.ui = FALSE),
+            selectInput("map_style1", "Map style", c("pretty", "jenks", "sd", "cont"), selected = "pretty"),
+            textInput("map_palette1", "Map Palette", "Reds"),
+            div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
+            conditionalPanel(
+              condition = "input.map_style1 == 'fixed'",
+              wellPanel(
+                div(style="display:inline-block", numericInput("breaks_min1", "min: ", 0, min = 0, max = NA)),
+                div(style="display:inline-block", numericInput("breaks_max1", "max: ", 2, min = 0, max = NA)),
+                div(style="display:inline-block",numericInput("breaks_step1", "step: ", 0.5, min = 0, max = NA))
+              )),
+           conditionalPanel(
+             condition = "input.map_style1 != 'fixed'",
+             wellPanel(
+               numericInput("bins1", "Number of bins: ", 5, min = 0, max = NA)
+             ))
+
           )
         ),
         #Card for mapping variable #2, default exceedance probability
@@ -295,7 +324,22 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            tmapOutput("var_map2", height = 500) %>% withSpinner(hide.ui = FALSE)
+            tmapOutput("var_map2", height = 500) %>% withSpinner(hide.ui = FALSE),
+            selectInput("map_style2", "Map style", c("pretty", "fixed", "jenks", "sd", "cont"), selected = "pretty"),
+            textInput("map_palette2", "Map Palette", "Reds"),
+            div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
+            conditionalPanel(
+              condition = "input.map_style2 == 'fixed'",
+              wellPanel(
+                div(style="display:inline-block", numericInput("breaks_min2", "min: ", 0, min = 0, max = NA)),
+                div(style="display:inline-block", numericInput("breaks_max2", "max: ", 50, min = 0, max = NA)),
+                div(style="display:inline-block",numericInput("breaks_step2", "step: ", 10, min = 0, max = NA))
+              )),
+            conditionalPanel(
+              condition = "input.map_style2 != 'fixed'",
+              wellPanel(
+                numericInput("bins2", "Number of bins: ", 5, min = 0, max = NA)
+              ))
           )
         )
       ),
