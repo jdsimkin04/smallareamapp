@@ -25,16 +25,16 @@ options(spinner.color="#69B4FB", #spinner.color.background="#ffffff",
 
 ui <- bs4DashPage(
   #Title for Header
-  dashboardHeader(
+  bs4DashNavbar(
     title = "Small area risk mApp",
     skin = "dark",
     status = "gray-dark"
                   ),
 
   #Sidebar menu with sub-menus
-  dashboardSidebar(
+  bs4DashSidebar(
     skin = "dark",
-    sidebarMenu(
+    bs4SidebarMenu(
       id = "sidebarMenu",
     menuItem(
       "Welcome",
