@@ -1,7 +1,6 @@
 # library(tidyverse)
 # library(magrittr)
 # library(ggthemes)
-# library(readr)
 # library(epitools)
 # library(viridis)
 # library(viridisLite)
@@ -89,11 +88,13 @@ server <- function(input, output, session) {
         map <- st_read(paste(tempdirname,
                              shpdf$name[grep(pattern = "*.shp$", shpdf$name)],
                              sep = "/"
-        ))
+        )) %>%
+          st_make_valid()
         map
       } else {
         x <- system.file('smallareamapp/extdata/scotlip/map', 'scotlip_test.shp', package='smallareamapp')
-        st_read(x)
+        st_read(x) %>%
+          st_make_valid()
 
     }
   })
