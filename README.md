@@ -14,13 +14,21 @@ Bayesian computation is done with integrated nested Laplace approximation (INLA)
 
 ## Installation
 
+First things first.. you'll need the INLA package by R-INLA. I recommend running either of these lines on your machine for the testing or stable versions. FYI R-INLA is hosted on [R-INLA website](https://www.r-inla.org/) and not on CRAN or github.
+
+``` r
+install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+
+install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/testing"), dep=TRUE)
+```
+
 **smallareamApp** is not available on [CRAN](https://cran.r-project.org/). You can install it now through Github via [my Github repo](https://github.com/jdsimkin04/smallareamapp) with:
 
 ``` r
 devtools::install_github("jdsimkin04/smallareamapp")
 ```
 
-**IMPORTANT!** The download will take LONG if you haven't installed R-INLA before. It's a beast of package (but it's worth it!).
+**IMPORTANT!** There are quite a few dependencies for this... so it may take long.
 
 ## Example
 
@@ -29,7 +37,6 @@ The app has one function... yes it's that simple. **runmApp()** will launch the 
 ``` r
 library(smallareamapp)
 runmApp()
-## basic example code
 ```
 
 ### Prepping data for upload

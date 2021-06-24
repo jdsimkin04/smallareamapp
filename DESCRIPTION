@@ -34,5 +34,6 @@ Depends:
     INLA,
     gtools,
     plotly
-Remotes:
-    jdsimkin04/shinyinla
+Suggests:
+    INLA (>= 21.01.13),
+
