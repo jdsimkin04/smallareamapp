@@ -135,7 +135,10 @@ server <- function(input, output, session) {
 
   output$table_input <- DT::renderDataTable({
     if (is.null(values$upload_state)) {
-      return(datatable(RV$data %>% head(20),
+      return(datatable(RV$data %>% mutate(
+        sir = round(sir,2),
+        lci = round(lci,2),
+        uci = round(uci,2)) %>% head(20),
                        rownames = F,
                        options = list(
                          fixedColumns = TRUE,
@@ -153,7 +156,10 @@ server <- function(input, output, session) {
                          ordering = TRUE),
                        class = "display"))
     } else if (values$upload_state == 'reset') {
-      return(datatable(RV$data %>% head(20),
+      return(datatable(RV$data %>% mutate(
+        sir = round(sir,2),
+        lci = round(lci,2),
+        uci = round(uci,2)) %>% head(20),
                        rownames = F,
                        options = list(
                          fixedColumns = TRUE,
