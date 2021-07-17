@@ -289,7 +289,7 @@ inla_rv <-
                  idareav = 1:(mytable %>% nrow),
                  idarea = 1:(mytable %>% nrow))
 
-        res <- inla(formula_bym,
+        inla(formula_bym,
                     family = "poisson", data = chsadf_inla,
                     E = exp, control.predictor = list(compute = TRUE),
                     control.compute = list(dic = TRUE, cpo = T, config = T),
@@ -316,11 +316,11 @@ test <-
       # mytable %>%
       inla_rv() %>%
         mutate(
-          exp = round(exp,0),
-          sir = round(sir,2),
-          lci = round(lci,2),
-          uci = round(uci,2),
-          cis = paste(round(lci,2),"-",round(uci,2))) %>%
+          # exp = round(exp,0),
+          # sir = round(sir,2),
+          # lci = round(lci,2),
+          # uci = round(uci,2),
+          cis = paste(round(lci,2),"-", round(uci,2))) %>%
         rename(SIR = sir)
 
     } else{
@@ -335,17 +335,17 @@ test <-
 
         chsadf_inla %>%
           mutate(
-            exp = round(exp,0),
-            sir = round(sir,2),
-            lci = round(lci,2),
-            uci = round(uci,2),
-            cis = paste0(lci, "-", uci),
-            RR = round(res$summary.fitted.values[, "mean"],2),
-            LL = round(res$summary.fitted.values[, "0.025quant"],2),
-            UL = round(res$summary.fitted.values[, "0.975quant"],2),
+            # exp = round(exp,0),
+            # sir = round(sir,2),
+            # lci = round(lci,2),
+            # uci = round(uci,2),
+            cis = paste(round(lci,2),"-", round(uci,2)),
+            RR = res$summary.fitted.values[, "mean"],
+            LL = res$summary.fitted.values[, "0.025quant"],
+            UL = res$summary.fitted.values[, "0.975quant"],
             cris = paste0(LL, "-", UL),
             change = round(abs((sir-RR)/sir*100),2)) %>%
-          mutate(exc = round(exc,2)) %>%
+          mutate(exc = exc) %>%
           rename(SIR = sir)
 
       } else{
@@ -357,17 +357,17 @@ test <-
 
         chsadf_inla %>%
           mutate(
-            exp = round(exp,0),
-            sir = round(sir,2),
-            lci = round(lci,2),
-            uci = round(uci,2),
-            cis = paste0(lci, "-", uci),
-            RR = round(res$summary.fitted.values[, "mean"],2),
-            LL = round(res$summary.fitted.values[, "0.025quant"],2),
-            UL = round(res$summary.fitted.values[, "0.975quant"],2),
+            # exp = round(exp,0),
+            # sir = round(sir,2),
+            # lci = round(lci,2),
+            # uci = round(uci,2),
+            cis = paste(round(lci,2),"-", round(uci,2)),
+            RR = res$summary.fitted.values[, "mean"],
+            LL = res$summary.fitted.values[, "0.025quant"],
+            UL = res$summary.fitted.values[, "0.975quant"],
             cris = paste0(LL, "-", UL),
             change = round(abs((sir-RR)/sir*100),2)) %>%
-          mutate(exc = round(exc,2)) %>%
+          mutate(exc = exc) %>%
           rename(SIR = sir)
 
       }
@@ -381,14 +381,40 @@ test <-
 # Creating maps
 map_test <- reactive({
 
+  if(input$spatial_choice == "No"){
 
     map_df <-
-      test()
+      test() %>%
+      mutate(
+        exp = round(exp,0),
+        SIR = round(SIR,2),
+        lci = round(lci,2),
+        uci = round(uci,2)
+        # cis = paste0(round(lci, 2), "-", round(uci,2)),
+        )
+
+    map_df_sf <-
+      map() %>%
+      left_join(., map_df, by = input$area_name_map)
+  } else{
+
+    map_df <-
+      test() %>%
+        mutate(
+          exp = round(exp,0),
+          SIR = round(SIR,2),
+          cis = paste(round(lci,2),"-", round(uci,2)),
+          RR = round(RR,2),
+          LL = round(LL,2),
+          UL = round(UL,2),
+          cris = paste0(round(LL,2), "-", round(UL,2))) %>%
+        mutate(exc = round(exc,2))
 
     map_df_sf <-
       map() %>%
       left_join(., map_df, by = input$area_name_map)
 
+    }
 }) %>%
   bindCache(inla_rv(), map())
 ## End
@@ -396,20 +422,21 @@ map_test <- reactive({
 
 ## Calculating spatial structured effect
 improved_res <- reactive({
-  mytable <- datasetInput()
-
-  chsadf_inla <-
-    mytable %>%
-    mutate(idareau = 1:(mytable %>% nrow),
-           idareav = 1:(mytable %>% nrow),
-           idarea = 1:(mytable %>% nrow))
+  # mytable <- datasetInput()
+  #
+  # chsadf_inla <-
+  #   mytable %>%
+  #   mutate(idareau = 1:(mytable %>% nrow),
+  #          idareav = 1:(mytable %>% nrow),
+  #          idarea = 1:(mytable %>% nrow))
   if(input$model_choice == "bym2"){
 
     res <- inla_rv()
 
-  res_improved <- inla.hyperpar(res)
-
-  res_improved$summary.hyperpar$mean[2]} else{
+  # res_improved <- inla.hyperpar(res)
+    hyper <- inla.zmarginal(res$marginals.hyperpar[[2]])
+    hyper$quant0.5}
+  else{
 
     res <- inla_rv()
 
@@ -428,6 +455,22 @@ improved_res <- reactive({
 }) %>%
   bindCache(datasetInput(), inla_rv(), input$model_choice)
 
+#95% HPD credible intervals
+spatial_effect_hpd <- reactive({
+
+  if(input$model_choice == "bym2"){
+
+    res <- inla_rv()
+
+    # res_improved <- inla.hyperpar(res)
+    inla.hpdmarginal(0.95, res$marginals.hyperpar[[2]])}
+  else{
+    NULL
+  }
+}) %>%
+  bindCache(datasetInput(), inla_rv(), input$model_choice)
+
+
 ## End
 
 # Data table for Analytics tab
@@ -436,6 +479,9 @@ improved_res <- reactive({
     if(input$spatial_choice == "No"){
       dt %>%
         select(input$area_name_map, cancer, sex, cases, exp, SIR,  cis, area_pop) %>%
+        mutate(
+          exp = round(exp,0),
+          SIR = round(SIR,2)) %>%
         datatable(.,
                   rownames = F,
                   colnames = c(input$area_name_map, "cancer", "sex", "Observed", "Expected", "SIR", "95% CIs", "Population"),
@@ -455,7 +501,18 @@ improved_res <- reactive({
                   class = "display"
         )} else {
           dt %>%
-            select(input$area_name_map, "cases", "exp", "SIR", cis,  "RR", cris, exc, area_pop, change) %>%
+            select(input$area_name_map, "cases", "exp", "SIR", cis,  "RR", LL, UL, cris, exc, area_pop, change) %>%
+            mutate(
+              exp = round(exp,0),
+              SIR = round(SIR,2),
+              # cis = paste0(round(lci,2), "-", round(uci,2)),
+              RR = round(RR,2)) %>%
+            mutate(
+              cris = paste0(round(LL,2), "-", round(UL,2)),
+              exc = round(exc,2)
+              # change = round(abs((sir-RR)/sir*100),2)
+              ) %>%
+            select(-LL, -UL) %>%
             datatable(.,
                       rownames = F,
                       colnames = c(input$area_name_map, "Observed", "Expected", "SIR",  "95% CIs",  "RR",  "95% CrIs", "Exc. Probability", "Population", "SIR Percent Change"),
@@ -769,13 +826,14 @@ if(input$map_style1 == "fixed"){
     if(input$spatial_choice == "Yes"){
     if(input$model_choice == "bym2"){
       text <- improved_res()
+      text2 <- spatial_effect_hpd()
 
-      return(HTML(paste0("The spatially structured effect was ", round(text,4), ". Meaning that ", round(text*100,2), "% of the variance in the data can be explained by a spatial effect.")))
+      return(HTML(paste0("The spatially structured effect was ", round(text,4), " with a 95% credible interval of (", round(text2[1], 4), "-",  round(text2[2], 4), ").", " Meaning that ", round(text*100,2), "% ", "(", round(text2[1]*100, 2), "% - ",  round(text2[2]*100, 2), "%) ", "of the variance in the modeled risk can be explained by a spatial effect.")))
 
     } else {
 
       text <- improved_res()
-      return(HTML(paste0("The spatially structured effect was ", round(text,4), ". Meaning that ", round(text*100,2), "% of the variance in the data can be explained by a spatial effect.")))
+      return(HTML(paste0("The spatially structured effect was ", round(text,4), ". Meaning that ", round(text*100,2), "% of the variance in the modeled risk can be explained by a spatial effect.")))
 
 
     }} else{
