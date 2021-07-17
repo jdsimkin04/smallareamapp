@@ -77,8 +77,8 @@ ui <- bs4DashPage(
         icon = NULL)
     )
   ),
-  actionButton("map1", " Snapshot map #1", status = "secondary", size = "sm", icon = icon("camera-retro")),
-  actionButton("map2", " Snapshot map #2", status = "secondary", size = "sm", icon = icon("camera-retro")),
+  actionButton("map1", " Snapshot map", status = "secondary", size = "sm", icon = icon("camera-retro")),
+  # actionButton("map2", " Snapshot map #2", status = "secondary", size = "sm", icon = icon("camera-retro")),
   # actionButton("model_summary", " Download  model results as RData", status = "secondary", size = "sm", icon = icon("download"))
   downloadButton('model_summary', 'Download Model', class="dlButton")
 
@@ -103,8 +103,8 @@ ui <- bs4DashPage(
       p("For exceedence probabilities, please specify a threshold"),
       numericInput(inputId = "threshold", label="Relative Risk Threshold", value = 1.10),
     p("Customize your map"),
-    selectInput("variable_var", "Variable for Map #1", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "SIR"),
-    selectInput("variable_var2", "Variable for Map #2", c("cases", "exp", "SIR","RR", "exc", "area_pop"), selected = "cases")
+    selectInput("variable_var", "Variable for Map", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "SIR")
+    # selectInput("variable_var2", "Variable for Map #2", c("cases", "exp", "SIR","RR", "exc", "area_pop"), selected = "cases")
     # selectInput("map_style", "Map style", c("fixed", "jenks", "sd", "cont"), selected = "cont"),
     # conditionalPanel(
     #   condition = "input.map_style == 'fixed'",
@@ -255,7 +255,7 @@ ui <- bs4DashPage(
                  strong("IMPORTANT!: "), em("The area id must match that area_name column in your csv file!"),
                  br(),
                  fileInput(inputId = "file_map",
-                           label = "Upload map. Choose relevant shapefiles(e.g. .shp, .shx, .dbf, and .prj files).",
+                           label = "Upload map. Choose relevant shapefiles (e.g. .shp, .shx, .dbf, and .prj files).",
                            multiple = TRUE,
                            accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
                  selectInput("area_name_map", "What column is your area name?",""),
@@ -280,10 +280,8 @@ ui <- bs4DashPage(
       tabName = "menu_5",
       fluidRow(
         #Card for mapping variable #1, default relative risk
-        column(
-          6,
           bs4Card(
-            title = "Map #1 (Please select variable from control bar)",
+            title = "Map (Please select variable from control bar)",
             status = "info",
             solidHeader = T,
             collapsible = T,
@@ -292,7 +290,12 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            tmapOutput("var_map", height = 400) %>% withSpinner(hide.ui = FALSE),
+            fluidRow(
+            column(
+              8,
+            tmapOutput("var_map", height = 500) %>% withSpinner(hide.ui = FALSE)),
+            column(
+              4,
             selectInput("map_style1", "Map style", c("pretty", "jenks", "sd", "cont"), selected = "pretty"),
             textInput("map_palette1", "Map Palette", "Reds"),
             div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
@@ -308,40 +311,41 @@ ui <- bs4DashPage(
              wellPanel(
                numericInput("bins1", "Number of bins: ", 5, min = 0, max = NA)
              ))
-
+           )
+            )
           )
-        ),
+        #,
         #Card for mapping variable #2, default exceedance probability
-        column(
-          6,
-          bs4Card(
-            title = "Map #2 (Please select variable from control bar)",
-            status = "info",
-            solidHeader = T,
-            collapsible = T,
-            collapsed = FALSE,
-            closable = FALSE,
-            labelStatus = "info",
-            labelText = "",
-            width = 12,
-            tmapOutput("var_map2", height = 400) %>% withSpinner(hide.ui = FALSE),
-            selectInput("map_style2", "Map style", c("pretty", "fixed", "jenks", "sd", "cont"), selected = "pretty"),
-            textInput("map_palette2", "Map Palette", "Reds"),
-            div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
-            conditionalPanel(
-              condition = "input.map_style2 == 'fixed'",
-              wellPanel(
-                div(style="display:inline-block", numericInput("breaks_min2", "min: ", 0, min = 0, max = NA)),
-                div(style="display:inline-block", numericInput("breaks_max2", "max: ", 50, min = 0, max = NA)),
-                div(style="display:inline-block",numericInput("breaks_step2", "step: ", 10, min = 0, max = NA))
-              )),
-            conditionalPanel(
-              condition = "input.map_style2 != 'fixed'",
-              wellPanel(
-                numericInput("bins2", "Number of bins: ", 5, min = 0, max = NA)
-              ))
-          )
-        )
+        # column(
+        #   6,
+        #   bs4Card(
+        #     title = "Map #2 (Please select variable from control bar)",
+        #     status = "info",
+        #     solidHeader = T,
+        #     collapsible = T,
+        #     collapsed = FALSE,
+        #     closable = FALSE,
+        #     labelStatus = "info",
+        #     labelText = "",
+        #     width = 12,
+        #     tmapOutput("var_map2", height = 400) %>% withSpinner(hide.ui = FALSE),
+        #     selectInput("map_style2", "Map style", c("pretty", "fixed", "jenks", "sd", "cont"), selected = "pretty"),
+        #     textInput("map_palette2", "Map Palette", "Reds"),
+        #     div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
+        #     conditionalPanel(
+        #       condition = "input.map_style2 == 'fixed'",
+        #       wellPanel(
+        #         div(style="display:inline-block", numericInput("breaks_min2", "min: ", 0, min = 0, max = NA)),
+        #         div(style="display:inline-block", numericInput("breaks_max2", "max: ", 50, min = 0, max = NA)),
+        #         div(style="display:inline-block",numericInput("breaks_step2", "step: ", 10, min = 0, max = NA))
+        #       )),
+        #     conditionalPanel(
+        #       condition = "input.map_style2 != 'fixed'",
+        #       wellPanel(
+        #         numericInput("bins2", "Number of bins: ", 5, min = 0, max = NA)
+        #       ))
+        #   )
+        # )
       ),
       #Card for data table include, SIR data, RR data, and Exc data
       column(

@@ -684,147 +684,147 @@ if(input$map_style1 == "fixed"){
   })
 
   # Variable #2 map
-  output$var_map2 <- renderTmap({
-    map_df_sf <- map_test()
-
-    if(input$map_style2 == "fixed"){
-
-    if(input$variable_var2 == "SIR"){
-      tm_shape(map_df_sf) +
-        tm_polygons(col = input$variable_var2,
-                    id = input$area_name_map,
-                    title = input$variable_var2,
-                    border.col = "white",
-                    lwd = 0.5,
-                    style = input$map_style2,
-                    breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-                    palette = input$map_palette2,
-                    popup.vars = c(
-                      "Cases: " = "cases",
-                      "Expected: " = "exp",
-                      "SIR: " = "SIR",
-                      "95% CIs: " = "cis")) +
-        tm_layout(
-          frame = F,
-          legend.title.size = 1.2,
-          legend.text.size = 1
-        )} else if(input$variable_var2 == "RR"){
-          tm_shape(map_df_sf) +
-            tm_polygons(col = input$variable_var2,
-                        id = input$area_name_map,
-                        title = input$variable_var2,
-                        border.col = "white",
-                        lwd = 0.5,
-                        style = input$map_style2,
-                        breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-                        palette = input$map_palette2,
-                        popup.vars = c(
-                          "Cases: " = "cases",
-                          "Expected: " = "exp",
-                          "RR: " = "RR",
-                          "95% CrIs: " = "cris",
-                          "Exceedance Prob: " = "exc"))
-        } else if(input$variable_var2 == "exc"){
-          tm_shape(map_df_sf) +
-            tm_polygons(col = "exc",
-                        id = input$area_name_map,
-                        title = "Exceedance Probability",
-                        border.col = "white",
-                        lwd = 0.5,
-                        style = input$map_style2,
-                        breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-                        palette = input$map_palette2,
-                        popup.vars = c(
-                          "Cases: " = "cases",
-                          "Expected: " = "exp",
-                          "RR: " = "RR",
-                          "95% CrIs: " = "cris",
-                          "Exceedance Prob: " = "exc"))
-        } else{
-          tm_shape(map_df_sf) +
-            tm_polygons(col = input$variable_var2,
-                        id = input$area_name_map,
-                        title = input$variable_var2,
-                        border.col = "white",
-                        lwd = 0.5,
-                        style = input$map_style2,
-                        breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-                        palette = input$map_palette2,
-                        popup.vars = c(
-                          "Cases: " = "cases",
-                          "Expected: " = "exp",
-                          "Population" = "area_pop"))
-        }
-    }
-    else{
-      if(input$variable_var2 == "SIR"){
-        tm_shape(map_df_sf) +
-          tm_polygons(col = input$variable_var2,
-                      id = input$area_name_map,
-                      title = input$variable_var2,
-                      border.col = "white",
-                      lwd = 0.5,
-                      style = input$map_style2,
-                      n = input$bins2,
-                      palette = input$map_palette2,
-                      popup.vars = c(
-                        "Cases: " = "cases",
-                        "Expected: " = "exp",
-                        "SIR: " = "SIR",
-                        "95% CIs: " = "cis")) +
-          tm_layout(
-            frame = F,
-            legend.title.size = 1.2,
-            legend.text.size = 1
-          )} else if(input$variable_var2 == "RR"){
-            tm_shape(map_df_sf) +
-              tm_polygons(col = input$variable_var2,
-                          id = input$area_name_map,
-                          title = input$variable_var2,
-                          border.col = "white",
-                          lwd = 0.5,
-                          style = input$map_style2,
-                          n = input$bins2,
-                          palette = input$map_palette2,
-                          popup.vars = c(
-                            "Cases: " = "cases",
-                            "Expected: " = "exp",
-                            "RR: " = "RR",
-                            "95% CrIs: " = "cris",
-                            "Exceedance Prob: " = "exc"))
-          } else if(input$variable_var2 == "exc"){
-            tm_shape(map_df_sf) +
-              tm_polygons(col = "exc",
-                          id = input$area_name_map,
-                          title = "Exceedance Probability",
-                          border.col = "white",
-                          lwd = 0.5,
-                          style = input$map_style2,
-                          n = input$bins2,
-                          palette = input$map_palette2,
-                          popup.vars = c(
-                            "Cases: " = "cases",
-                            "Expected: " = "exp",
-                            "RR: " = "RR",
-                            "95% CrIs: " = "cris",
-                            "Exceedance Prob: " = "exc"))
-          } else{
-            tm_shape(map_df_sf) +
-              tm_polygons(col = input$variable_var2,
-                          id = input$area_name_map,
-                          title = input$variable_var2,
-                          border.col = "white",
-                          lwd = 0.5,
-                          style = input$map_style2,
-                          n = input$bins2,
-                          palette = input$map_palette2,
-                          popup.vars = c(
-                            "Cases: " = "cases",
-                            "Expected: " = "exp",
-                            "Population" = "area_pop"))
-          }
-    }
-  })
+  # output$var_map2 <- renderTmap({
+  #   map_df_sf <- map_test()
+  #
+  #   if(input$map_style2 == "fixed"){
+  #
+  #   if(input$variable_var2 == "SIR"){
+  #     tm_shape(map_df_sf) +
+  #       tm_polygons(col = input$variable_var2,
+  #                   id = input$area_name_map,
+  #                   title = input$variable_var2,
+  #                   border.col = "white",
+  #                   lwd = 0.5,
+  #                   style = input$map_style2,
+  #                   breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+  #                   palette = input$map_palette2,
+  #                   popup.vars = c(
+  #                     "Cases: " = "cases",
+  #                     "Expected: " = "exp",
+  #                     "SIR: " = "SIR",
+  #                     "95% CIs: " = "cis")) +
+  #       tm_layout(
+  #         frame = F,
+  #         legend.title.size = 1.2,
+  #         legend.text.size = 1
+  #       )} else if(input$variable_var2 == "RR"){
+  #         tm_shape(map_df_sf) +
+  #           tm_polygons(col = input$variable_var2,
+  #                       id = input$area_name_map,
+  #                       title = input$variable_var2,
+  #                       border.col = "white",
+  #                       lwd = 0.5,
+  #                       style = input$map_style2,
+  #                       breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+  #                       palette = input$map_palette2,
+  #                       popup.vars = c(
+  #                         "Cases: " = "cases",
+  #                         "Expected: " = "exp",
+  #                         "RR: " = "RR",
+  #                         "95% CrIs: " = "cris",
+  #                         "Exceedance Prob: " = "exc"))
+  #       } else if(input$variable_var2 == "exc"){
+  #         tm_shape(map_df_sf) +
+  #           tm_polygons(col = "exc",
+  #                       id = input$area_name_map,
+  #                       title = "Exceedance Probability",
+  #                       border.col = "white",
+  #                       lwd = 0.5,
+  #                       style = input$map_style2,
+  #                       breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+  #                       palette = input$map_palette2,
+  #                       popup.vars = c(
+  #                         "Cases: " = "cases",
+  #                         "Expected: " = "exp",
+  #                         "RR: " = "RR",
+  #                         "95% CrIs: " = "cris",
+  #                         "Exceedance Prob: " = "exc"))
+  #       } else{
+  #         tm_shape(map_df_sf) +
+  #           tm_polygons(col = input$variable_var2,
+  #                       id = input$area_name_map,
+  #                       title = input$variable_var2,
+  #                       border.col = "white",
+  #                       lwd = 0.5,
+  #                       style = input$map_style2,
+  #                       breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
+  #                       palette = input$map_palette2,
+  #                       popup.vars = c(
+  #                         "Cases: " = "cases",
+  #                         "Expected: " = "exp",
+  #                         "Population" = "area_pop"))
+  #       }
+  #   }
+  #   else{
+  #     if(input$variable_var2 == "SIR"){
+  #       tm_shape(map_df_sf) +
+  #         tm_polygons(col = input$variable_var2,
+  #                     id = input$area_name_map,
+  #                     title = input$variable_var2,
+  #                     border.col = "white",
+  #                     lwd = 0.5,
+  #                     style = input$map_style2,
+  #                     n = input$bins2,
+  #                     palette = input$map_palette2,
+  #                     popup.vars = c(
+  #                       "Cases: " = "cases",
+  #                       "Expected: " = "exp",
+  #                       "SIR: " = "SIR",
+  #                       "95% CIs: " = "cis")) +
+  #         tm_layout(
+  #           frame = F,
+  #           legend.title.size = 1.2,
+  #           legend.text.size = 1
+  #         )} else if(input$variable_var2 == "RR"){
+  #           tm_shape(map_df_sf) +
+  #             tm_polygons(col = input$variable_var2,
+  #                         id = input$area_name_map,
+  #                         title = input$variable_var2,
+  #                         border.col = "white",
+  #                         lwd = 0.5,
+  #                         style = input$map_style2,
+  #                         n = input$bins2,
+  #                         palette = input$map_palette2,
+  #                         popup.vars = c(
+  #                           "Cases: " = "cases",
+  #                           "Expected: " = "exp",
+  #                           "RR: " = "RR",
+  #                           "95% CrIs: " = "cris",
+  #                           "Exceedance Prob: " = "exc"))
+  #         } else if(input$variable_var2 == "exc"){
+  #           tm_shape(map_df_sf) +
+  #             tm_polygons(col = "exc",
+  #                         id = input$area_name_map,
+  #                         title = "Exceedance Probability",
+  #                         border.col = "white",
+  #                         lwd = 0.5,
+  #                         style = input$map_style2,
+  #                         n = input$bins2,
+  #                         palette = input$map_palette2,
+  #                         popup.vars = c(
+  #                           "Cases: " = "cases",
+  #                           "Expected: " = "exp",
+  #                           "RR: " = "RR",
+  #                           "95% CrIs: " = "cris",
+  #                           "Exceedance Prob: " = "exc"))
+  #         } else{
+  #           tm_shape(map_df_sf) +
+  #             tm_polygons(col = input$variable_var2,
+  #                         id = input$area_name_map,
+  #                         title = input$variable_var2,
+  #                         border.col = "white",
+  #                         lwd = 0.5,
+  #                         style = input$map_style2,
+  #                         n = input$bins2,
+  #                         palette = input$map_palette2,
+  #                         popup.vars = c(
+  #                           "Cases: " = "cases",
+  #                           "Expected: " = "exp",
+  #                           "Population" = "area_pop"))
+  #         }
+  #   }
+  # })
 
   #Calculating the spatial effect
   output$spatial_effect <- renderUI({
@@ -844,7 +844,7 @@ if(input$map_style1 == "fixed"){
 
 
     }} else{
-      HTML("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown.")
+      HTML(paste("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown."))
     }
   })
 
@@ -871,7 +871,7 @@ if(input$map_style1 == "fixed"){
         kable(., format = "html") %>%
         kable_styling()
     } else {
-      paste("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown.")
+      HTML(paste("To view this data table, please select", em("Yes"), "to the", em("Spatial Modelling"), "dropdown."))
     }
   })
 
