@@ -68,7 +68,7 @@ ui <- bs4DashPage(
       tabName = "menu_5",
       icon = NULL),
       menuSubItem(
-        "Posterior predictive checks",
+        "Model validation",
         tabName = "menu_6",
         icon = NULL),
       menuSubItem(
@@ -176,10 +176,10 @@ ui <- bs4DashPage(
             "You need ", strong("two"), " things for this app to work:",
                tags$ol(tags$li("Previously calculated observed cases, age-adjutsed expected counts, and standardized incidence ratios"), tags$li("Boundary files for the regions of interest.")),
             "Before going to the ", em("Analytics"), " page, upload health data on this tab.",
-            "See the ", em("Georgraphy shapefiles"), " to upload a map boundary files and don't forget to.", strong("create a spatial weights matrix."),
+            "See the ", em("Georgraphy shapefiles"), " to upload a map boundary files and don't forget to ", strong("create a spatial weights matrix."),
             br(),
             br(),
-            h3("No data? Don't worry!"), "Select 'Yes' below for Scotland Lip Cancer data. Everything will be ready to go. Don't forget to create the weight's matrix!",
+            h3("No data? Don't worry!"), "Select 'Yes' below for Scotland Lip Cancer data. All you'll need is to to create the weight's matrix.",
             selectInput("scotland_lip", label = "Scotland Lip Cancer sample data", choices = c("No", "Yes"), selected = "No"),
             title = "Instructions",
             status = "info",
@@ -229,7 +229,7 @@ ui <- bs4DashPage(
           status = "info",
           solidHeader = T,
           collapsible = TRUE,
-          collapsed = FALSE,
+          collapsed = T,
           closable = FALSE,
           labelStatus = "info",
           labelText = "text",
@@ -252,6 +252,7 @@ ui <- bs4DashPage(
                  labelText = "text",
                  width = 12,
                  "Please upload a shapefile for the geography of interest.",
+                 "Note that the Scotland map is already uploaded, please create a spatial weights matrix with the button below.",
                  br(),
                  strong("IMPORTANT!: "), em("The area id must match that area_name column in your csv file!"),
                  fileInput(inputId = "file_map",
@@ -268,7 +269,7 @@ ui <- bs4DashPage(
                  status = "info",
                  solidHeader = T,
                  collapsible = TRUE,
-                 collapsed = FALSE,
+                 collapsed = T,
                  closable = FALSE,
                  labelStatus = "info",
                  labelText = "text",
@@ -292,7 +293,7 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            tmapOutput("var_map", height = 500) %>% withSpinner(hide.ui = FALSE),
+            tmapOutput("var_map", height = 400) %>% withSpinner(hide.ui = FALSE),
             selectInput("map_style1", "Map style", c("pretty", "jenks", "sd", "cont"), selected = "pretty"),
             textInput("map_palette1", "Map Palette", "Reds"),
             div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
@@ -324,7 +325,7 @@ ui <- bs4DashPage(
             labelStatus = "info",
             labelText = "",
             width = 12,
-            tmapOutput("var_map2", height = 500) %>% withSpinner(hide.ui = FALSE),
+            tmapOutput("var_map2", height = 400) %>% withSpinner(hide.ui = FALSE),
             selectInput("map_style2", "Map style", c("pretty", "fixed", "jenks", "sd", "cont"), selected = "pretty"),
             textInput("map_palette2", "Map Palette", "Reds"),
             div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
@@ -452,49 +453,50 @@ ui <- bs4DashPage(
             footer = "PIT values are plotted on a log scale. The PIT is the probability that a new response is lower than the corresponding observed value. A uniform distribution is expected if the model represents the observations well."
           )
         )
-      ),
-      #MSPE, R squared and potential outliers
-      fluidRow(
-        column(
-          width = 6,
-          # Datatable
-          bs4Card(
-            title = "Model measurements",
-            status = "info",
-            solidHeader = T,
-            collapsible = T,
-            collapsed = T,
-            closable = FALSE,
-            labelStatus = "info",
-            labelText = "",
-            width = 12,
-            htmlOutput("diagnostics_table")
-          )
-        ),
-        column(
-          6,
-          bs4Card(
-            title = "Alternative PIT CFD Plot",
-            status = "info",
-            solidHeader = T,
-            collapsible = T,
-            collapsed = T,
-            closable = FALSE,
-            labelStatus = "info",
-            labelText = "",
-            width = 12,
-            plotOutput("alt_pit_plot") %>% withSpinner(hide.ui = FALSE),
-            footer = "PIT values are plotted as a cumulative density function. The PIT is the probability that a new response is lower than the corresponding observed value. We would expect a somewhat uniform CFD line."
-          )
-        )
       )
+      #,
+      #MSPE, R squared and potential outliers
+      # fluidRow(
+      #   column(
+      #     width = 6,
+      #     # Datatable
+      #     bs4Card(
+      #       title = "Model measurements",
+      #       status = "info",
+      #       solidHeader = T,
+      #       collapsible = T,
+      #       collapsed = T,
+      #       closable = FALSE,
+      #       labelStatus = "info",
+      #       labelText = "",
+      #       width = 12,
+      #       htmlOutput("diagnostics_table")
+      #     )
+      #   ),
+      #   column(
+      #     6,
+      #     bs4Card(
+      #       title = "Alternative PIT CFD Plot",
+      #       status = "info",
+      #       solidHeader = T,
+      #       collapsible = T,
+      #       collapsed = T,
+      #       closable = FALSE,
+      #       labelStatus = "info",
+      #       labelText = "",
+      #       width = 12,
+      #       plotOutput("alt_pit_plot") %>% withSpinner(hide.ui = FALSE),
+      #       footer = "PIT values are plotted as a cumulative density function. The PIT is the probability that a new response is lower than the corresponding observed value. We would expect a somewhat uniform CFD line."
+      #     )
+      #   )
+      # )
     ),
     bs4TabItem(
       tabName = "menu_7",
       fluidRow(
         #Moran's density plot
-        column(
-          6,
+        # column(
+        #   6,
           bs4Card(
             title = "Moran's I test",
             status = "info",
@@ -510,24 +512,25 @@ ui <- bs4DashPage(
 Vertical black line represents the Moran's I for the actual data."
 
           )
-        ),
+        # )
+        #,
         #Local moran's scatterplot
-        column(
-          6,
-          bs4Card(
-            title = "Moran's scatterplot",
-            status = "info",
-            solidHeader = T,
-            collapsible = T,
-            collapsed = F,
-            closable = FALSE,
-            labelStatus = "info",
-            labelText = "",
-            width = 12,
-            plotlyOutput("lmorans_plot") %>% withSpinner(hide.ui = FALSE),
-            footer = "*SIR has been scaled and centered."
-          )
-        )
+        # column(
+        #   6,
+        #   bs4Card(
+        #     title = "Moran's scatterplot",
+        #     status = "info",
+        #     solidHeader = T,
+        #     collapsible = T,
+        #     collapsed = F,
+        #     closable = FALSE,
+        #     labelStatus = "info",
+        #     labelText = "",
+        #     width = 12,
+        #     plotlyOutput("lmorans_plot") %>% withSpinner(hide.ui = FALSE),
+        #     footer = "*SIR has been scaled and centered."
+        #   )
+        # )
       )
       )
     )
