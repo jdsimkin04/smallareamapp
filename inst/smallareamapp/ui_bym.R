@@ -103,7 +103,15 @@ ui <- bs4DashPage(
       p("For exceedence probabilities, please specify a threshold"),
       numericInput(inputId = "threshold", label="Relative Risk Threshold", value = 1.10),
     p("Customize your map"),
-    selectInput("variable_var", "Variable for Map", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "SIR")
+    conditionalPanel(
+      condition = "spatial_choice == 'No'",
+    selectInput("variable_var", "Variable for Map", c("cases", "exp", "SIR", "area_pop"), selected = "SIR")
+    ),
+    conditionalPanel(
+      condition = "spatial_choice != 'No'",
+      selectInput("variable_var", "Variable for Map", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "RR")
+    )
+
     # selectInput("variable_var2", "Variable for Map #2", c("cases", "exp", "SIR","RR", "exc", "area_pop"), selected = "cases")
     # selectInput("map_style", "Map style", c("fixed", "jenks", "sd", "cont"), selected = "cont"),
     # conditionalPanel(
