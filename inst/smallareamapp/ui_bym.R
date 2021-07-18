@@ -318,7 +318,16 @@ ui <- bs4DashPage(
              condition = "input.map_style1 != 'fixed'",
              wellPanel(
                numericInput("bins1", "Number of bins: ", 5, min = 0, max = NA)
-             ))
+             )),
+           conditionalPanel(
+             condition = "input.spatial_choice == 'Yes'",
+           selectInput("border", "Border areas with excess risk?", c("No", "Yes"), selected = "No"),
+           conditionalPanel(
+             condition = "input.border == 'Yes'",
+             wellPanel(
+               sliderInput("pe", "Exceedance probability:", min = 0, max = 1, value = 0.8)
+             )
+           ))
            )
             )
           )
