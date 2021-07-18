@@ -109,7 +109,7 @@ ui <- bs4DashPage(
     ),
     conditionalPanel(
       condition = "spatial_choice != 'No'",
-      selectInput("variable_var", "Variable for Map", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "RR")
+      selectInput("variable_var1", "Variable for Map", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "RR")
     )
 
     # selectInput("variable_var2", "Variable for Map #2", c("cases", "exp", "SIR","RR", "exc", "area_pop"), selected = "cases")
