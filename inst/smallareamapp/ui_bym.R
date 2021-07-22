@@ -23,6 +23,8 @@
 options(spinner.color="#69B4FB", #spinner.color.background="#ffffff",
         spinner.size=1, spinner.type = 7, hide.ui = FALSE)
 
+options(shiny.maxRequestSize = 30*1024^2)
+
 ui <- bs4DashPage(
   #Title for Header
   bs4DashNavbar(
