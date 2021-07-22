@@ -26,7 +26,7 @@ options(spinner.color="#69B4FB", #spinner.color.background="#ffffff",
 ui <- bs4DashPage(
   #Title for Header
   bs4DashNavbar(
-    title = "Small area risk mApp",
+    title = "Small area mApp",
     skin = "dark",
     status = "gray-dark"
                   ),
@@ -131,11 +131,14 @@ ui <- bs4DashPage(
         tabName = "menu_1",
         #Title for welcome page
     jumbotron(
-          title = p("Welcome to the", em("small area risk mApp!")),
-          lead = "This Shiny app helps you estimate disease risk across small geographical areas using Bayesian spatial modelling",
-          "Check out the sidebar. Upload data on the ", em("File Upload"), " tab. Analyze data with ", em("Analytics"), " tab.",
+          title = p("Welcome to the", em("small area mApp!")),
+          lead = "This Shiny app helps you estimate disease risk across small geographical areas using Bayesian spatial modelling.",
+          h4(em("Getting Started")),
+          "Check out the sidebar on the left. Upload data on the ", em("File Upload"), " tab. Analyze data with ", em("Analytics"), " tab.",
+          br(),
+          "Interested in the back end R code? Or a quick demo of the App functions? Check out the GitHub Repo.",
           status = "info",
-          btnName = "App GitHub Repository",
+          btnName = "App GitHub Repo",
           href = "https://github.com/jdsimkin04"
         ),
     fluidRow(
@@ -144,9 +147,14 @@ ui <- bs4DashPage(
         title = bs4UserDescription(
           title = "Jonathan Simkin",
           subtitle = "Developer",
+          "text here..",
           type = 2,
           image = "https://avatars2.githubusercontent.com/u/41752372?s=460&u=b5974705888e814e9d4661b77be1c2f2357779b3&v=4"
         ),
+        "The methodological approach used in this App was co-designed with a fantastic team of people. Please see our journal article for a use case of this App in population oncology research and a full description of the methods involved.",
+        "If you have any feedback, issues, or ideas, please reach out on Twitter or GitHub.",
+        br(),
+        br(),
         collapsible = F,
         status = "gray",
         gradient = TRUE,
@@ -268,7 +276,7 @@ ui <- bs4DashPage(
                            accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
                  selectInput("area_name_map", "What column is your area name?",""),
                  # "A weights matrix is required for spatial modelling",
-                 actionButton("weight_matrix", strong("Create weight matrix")), textOutput("wm_text"))),
+                 actionButton("weight_matrix", strong("Create weights matrix")), textOutput("wm_text"))),
 
         column(6,
                bs4Card(
