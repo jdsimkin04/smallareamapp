@@ -100,8 +100,8 @@ ui <- bs4DashPage(
     selectInput("cancer_var", "Cancer type",""),
     selectInput("sex_var", "Sex", ""),
     p(strong("Bayesian modeling of cases")),
-      selectInput("spatial_choice", "Spatial Poisson w/INLA?", c("No", "Yes"), selected = "No"),
-      selectInput("model_choice", "Choose a model", c("bym2", "bym"), selected = "bym2"),
+    selectInput("model_choice", "Choose a model", c("bym2", "bym"), selected = "bym2"),
+      selectInput("spatial_choice", "Implement Spatial Poisson w/INLA?", c("No", "Yes"), selected = "No"),
       p("For exceedence probabilities, please specify a threshold"),
       numericInput(inputId = "threshold", label="Relative Risk Threshold", value = 1.10),
     p("Customize your map"),
@@ -315,7 +315,7 @@ ui <- bs4DashPage(
             column(
               4,
             selectInput("map_style1", "Map style", c("pretty", "jenks", "sd", "cont"), selected = "pretty"),
-            textInput("map_palette1", "Map Palette", "Reds"),
+            textInput("map_palette1", "Map Palette", "BuPu"),
             div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
             conditionalPanel(
               condition = "input.map_style1 == 'fixed'",
