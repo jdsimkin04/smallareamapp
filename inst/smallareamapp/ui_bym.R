@@ -92,6 +92,8 @@ ui <- bs4DashPage(
     title = "Analytics panel",
     width = 250,
     id = "controlbar",
+
+
     controlbarMenu(
     id = "controlbarMenu",
     #controlbar items
