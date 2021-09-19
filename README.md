@@ -45,4 +45,4 @@ runmApp()
 
 # Package Walkthrough
 
-I've put together a package installation and walkthrough guide here.
+I've put together a package installation and [walkthrough guide here](https://github.com/jdsimkin04/smallareamapp/blob/main/smallareamApp%20guide.pdf).
