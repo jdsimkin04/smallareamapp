@@ -1,4 +1,4 @@
-# small area mApp
+# *smallareamApp*
 
 <!-- badges: start -->
 
@@ -41,6 +41,8 @@ runmApp()
 
 ### Prepping data for upload
 
-**smallareamApp** analyzes *your* data. There's one catch though. The data has to be set up exactly right for the app to accept it. I know it's not ideal... but we're working on that! For the meantime, there's a template table on the app that shows you what it is expecting.
+**smallareamApp** analyzes *your* data. There's one catch though. The data has to be set up exactly right for the app to accept it. I know it's not ideal... but I'm working on that! For the meantime, there's a template table on the app that shows you what it is expecting. It includes area name, cancer type, sex, observed counts, age-adjusted expected counts, standardized incidence ratios, etc. I use the [epitool](shttps://cran.r-project.org/web/packages/epitools/epitools.pdfpackage) for indirect age-standardization.
 
-More to come... Stay tuned!
+# Package Walkthrough
+
+I've put together a package installation and walkthrough guide here.
