@@ -566,7 +566,8 @@ if(input$map_style1 == "fixed"){
           frame = F,
           legend.title.size = 1.2,
           legend.text.size = 1
-        )} else if(input$variable_var == "RR"){
+        )}
+  else if(input$variable_var == "RR"){
           tm_shape(map_df_sf) +
             tm_polygons(col = input$variable_var,
                         id = input$area_name_map,
@@ -582,7 +583,8 @@ if(input$map_style1 == "fixed"){
                           "RR: " = "RR",
                           "95% CrIs: " = "cris",
                           "Exceedance Prob: " = "exc"))
-        } else if(input$variable_var == "exc"){
+        }
+  else if(input$variable_var == "exc"){
           tm_shape(map_df_sf) +
             tm_polygons(col = "exc",
                         id = input$area_name_map,
@@ -598,7 +600,8 @@ if(input$map_style1 == "fixed"){
                           "RR: " = "RR",
                           "95% CrIs: " = "cris",
                           "Exceedance Prob: " = "exc"))
-        } else{
+        }
+  else{
           tm_shape(map_df_sf) +
             tm_polygons(col = input$variable_var,
                         id = input$area_name_map,
@@ -633,7 +636,8 @@ if(input$map_style1 == "fixed"){
         frame = F,
         legend.title.size = 1.2,
         legend.text.size = 1
-      )} else if(input$variable_var == "RR"){
+      )}
+  else if(input$variable_var == "RR"){
         tm_shape(map_df_sf) +
           tm_polygons(col = input$variable_var,
                       id = input$area_name_map,
@@ -649,7 +653,8 @@ if(input$map_style1 == "fixed"){
                         "RR: " = "RR",
                         "95% CrIs: " = "cris",
                         "Exceedance Prob: " = "exc"))
-      } else if(input$variable_var == "exc"){
+      }
+  else if(input$variable_var == "exc"){
         tm_shape(map_df_sf) +
           tm_polygons(col = "exc",
                       id = input$area_name_map,
@@ -665,7 +670,8 @@ if(input$map_style1 == "fixed"){
                         "RR: " = "RR",
                         "95% CrIs: " = "cris",
                         "Exceedance Prob: " = "exc"))
-      } else{
+      }
+  else{
         tm_shape(map_df_sf) +
           tm_polygons(col = input$variable_var,
                       id = input$area_name_map,

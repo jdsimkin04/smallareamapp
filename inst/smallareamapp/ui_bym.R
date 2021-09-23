@@ -108,11 +108,11 @@ ui <- bs4DashPage(
       numericInput(inputId = "threshold", label="Relative Risk Threshold", value = 1.10),
     p("Customize your map"),
     conditionalPanel(
-      condition = "spatial_choice == 'No'",
+      condition = "input.spatial_choice == 'No'",
     selectInput("variable_var", "Variable for Map", c("cases", "exp", "SIR", "area_pop"), selected = "SIR")
     ),
     conditionalPanel(
-      condition = "spatial_choice != 'No'",
+      condition = "input.spatial_choice != 'No'",
       selectInput("variable_var1", "Variable for Map", c("cases", "exp", "SIR", "RR", "exc", "area_pop"), selected = "RR")
     )
 
@@ -316,7 +316,7 @@ ui <- bs4DashPage(
             tmapOutput("var_map", height = 500) %>% withSpinner(hide.ui = FALSE)),
             column(
               4,
-            selectInput("map_style1", "Map style", c("pretty", "jenks", "sd", "cont"), selected = "pretty"),
+            selectInput("map_style1", "Map style", c("fixed", "pretty", "jenks", "sd", "cont"), selected = "pretty"),
             textInput("map_palette1", "Map Palette", "BuPu"),
             div("Run tmaptools::palette_explorer() to explore colour palettes", style = "font-size:12px;"),
             conditionalPanel(
