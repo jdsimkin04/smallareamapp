@@ -285,7 +285,8 @@ inla_rv <-
         inla(formula,
                     family = "poisson", data = chsadf_inla,
                     E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE, cpo = T, config = T),
+                    control.compute = list(dic = TRUE, cpo = T, config = T,
+                                           return.marginals.predictor = T),
                     control.inla = list(strategy = "laplace", npoints = 21)
         )
       } else{
@@ -298,7 +299,8 @@ inla_rv <-
         inla(formula_bym,
                     family = "poisson", data = chsadf_inla,
                     E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE, cpo = T, config = T),
+                    control.compute = list(dic = TRUE, cpo = T, config = T,
+                                           return.marginals.predictor = T),
                     control.inla = list(strategy = "laplace", npoints = 21)
         )
       }
