@@ -257,7 +257,7 @@ server <- function(input, output, session) {
   ### Data for Analytics ###
 
   #dataset function, load data and filter based on inputs
-  datasetInput <- reactive({
+  datasetInput <- eventReactive(input$run, {
 
     mydatain <- data()
     mydatain %>%
@@ -268,49 +268,89 @@ server <- function(input, output, session) {
   #Creating a reactive that analyzes data depending on whether data will be spatially modelled or not
 
 #here is our inla result... use bindCache to run this once and improve app performance
-inla_rv <-
-  reactive({
-    mytable <- datasetInput()
-    if(input$spatial_choice == "No"){
-      mytable
-    }
-    else{
-      if(input$model_choice == "bym2"){
-        chsadf_inla <-
-          mytable %>%
-          mutate(idareau = 1:(mytable %>% nrow),
-                 idareav = 1:(mytable %>% nrow),
-                 idarea = 1:(mytable %>% nrow))
 
-        inla(formula,
-                    family = "poisson", data = chsadf_inla,
-                    E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE, cpo = T, config = T,
-                                           return.marginals.predictor = T),
-                    control.inla = list(strategy = "laplace", npoints = 21)
-        )
-      } else{
-        chsadf_inla <-
-          mytable %>%
-          mutate(idareau = 1:(mytable %>% nrow),
-                 idareav = 1:(mytable %>% nrow),
-                 idarea = 1:(mytable %>% nrow))
-
-        inla(formula_bym,
-                    family = "poisson", data = chsadf_inla,
-                    E = exp, control.predictor = list(compute = TRUE),
-                    control.compute = list(dic = TRUE, cpo = T, config = T,
-                                           return.marginals.predictor = T),
-                    control.inla = list(strategy = "laplace", npoints = 21)
-        )
+  inla_rv <- eventReactive(input$run, {
+      mytable <- datasetInput()
+      if(input$spatial_choice == "No"){
+        mytable
       }
-    }
+      else{
+        if(input$model_choice == "bym2"){
+          chsadf_inla <-
+            mytable %>%
+            mutate(idareau = 1:(mytable %>% nrow),
+                   idareav = 1:(mytable %>% nrow),
+                   idarea = 1:(mytable %>% nrow))
 
-  }) %>%
-  bindCache(input$spatial_choice, input$model_choice, datasetInput())
+          inla(formula,
+               family = "poisson", data = chsadf_inla,
+               E = exp, control.predictor = list(compute = TRUE),
+               control.compute = list(dic = TRUE, cpo = T, config = T,
+                                      return.marginals.predictor = T),
+               control.inla = list(strategy = "laplace", npoints = 21)
+          )
+        } else{
+          chsadf_inla <-
+            mytable %>%
+            mutate(idareau = 1:(mytable %>% nrow),
+                   idareav = 1:(mytable %>% nrow),
+                   idarea = 1:(mytable %>% nrow))
+
+          inla(formula_bym,
+               family = "poisson", data = chsadf_inla,
+               E = exp, control.predictor = list(compute = TRUE),
+               control.compute = list(dic = TRUE, cpo = T, config = T,
+                                      return.marginals.predictor = T),
+               control.inla = list(strategy = "laplace", npoints = 21)
+          )
+        }
+      }
+
+    })
+
+# inla_rv <-
+#   reactive({
+#     mytable <- datasetInput()
+#     if(input$spatial_choice == "No"){
+#       mytable
+#     }
+#     else{
+#       if(input$model_choice == "bym2"){
+#         chsadf_inla <-
+#           mytable %>%
+#           mutate(idareau = 1:(mytable %>% nrow),
+#                  idareav = 1:(mytable %>% nrow),
+#                  idarea = 1:(mytable %>% nrow))
+#
+#         inla(formula,
+#                     family = "poisson", data = chsadf_inla,
+#                     E = exp, control.predictor = list(compute = TRUE),
+#                     control.compute = list(dic = TRUE, cpo = T, config = T,
+#                                            return.marginals.predictor = T),
+#                     control.inla = list(strategy = "laplace", npoints = 21)
+#         )
+#       } else{
+#         chsadf_inla <-
+#           mytable %>%
+#           mutate(idareau = 1:(mytable %>% nrow),
+#                  idareav = 1:(mytable %>% nrow),
+#                  idarea = 1:(mytable %>% nrow))
+#
+#         inla(formula_bym,
+#                     family = "poisson", data = chsadf_inla,
+#                     E = exp, control.predictor = list(compute = TRUE),
+#                     control.compute = list(dic = TRUE, cpo = T, config = T,
+#                                            return.marginals.predictor = T),
+#                     control.inla = list(strategy = "laplace", npoints = 21)
+#         )
+#       }
+#     }
+#
+#   }) %>%
+#   bindCache(input$spatial_choice, input$model_choice, datasetInput())
 
 test <-
-  reactive({
+  eventReactive(input$run, {
     mytable <- datasetInput()
 
     chsadf_inla <-
@@ -381,13 +421,12 @@ test <-
       }
     }
 
-  }) %>%
-  bindCache(datasetInput(), inla_rv(), input$model_choice, input$spatial_choice)
+  })
 
   ## END
 
 # Creating maps
-map_test <- reactive({
+map_test <- eventReactive(input$run,{
 
   if(input$spatial_choice == "No"){
 
@@ -423,13 +462,13 @@ map_test <- reactive({
       left_join(., map_df, by = input$area_name_map)
 
     }
-}) %>%
-  bindCache(inla_rv(), map())
+})# %>%
+  # bindCache(inla_rv(), map())
 ## End
 
 
 ## Calculating spatial structured effect
-improved_res <- reactive({
+improved_res <- eventReactive(input$run, {
   # mytable <- datasetInput()
   #
   # chsadf_inla <-
@@ -460,8 +499,7 @@ improved_res <- reactive({
 
     x_u/(x_v+x_u)
   }
-}) %>%
-  bindCache(datasetInput(), inla_rv(), input$model_choice)
+})
 
 #95% HPD credible intervals
 spatial_effect_hpd <- reactive({
@@ -1011,149 +1049,6 @@ if(input$map_style1 == "fixed"){
   }
   }
   })
-
-  # Variable #2 map
-  # output$var_map2 <- renderTmap({
-  #   map_df_sf <- map_test()
-  #
-  #   if(input$map_style2 == "fixed"){
-  #
-  #   if(input$variable_var2 == "SIR"){
-  #     tm_shape(map_df_sf) +
-  #       tm_polygons(col = input$variable_var2,
-  #                   id = input$area_name_map,
-  #                   title = input$variable_var2,
-  #                   border.col = "white",
-  #                   lwd = 0.5,
-  #                   style = input$map_style2,
-  #                   breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-  #                   palette = input$map_palette2,
-  #                   popup.vars = c(
-  #                     "Cases: " = "cases",
-  #                     "Expected: " = "exp",
-  #                     "SIR: " = "SIR",
-  #                     "95% CIs: " = "cis")) +
-  #       tm_layout(
-  #         frame = F,
-  #         legend.title.size = 1.2,
-  #         legend.text.size = 1
-  #       )} else if(input$variable_var2 == "RR"){
-  #         tm_shape(map_df_sf) +
-  #           tm_polygons(col = input$variable_var2,
-  #                       id = input$area_name_map,
-  #                       title = input$variable_var2,
-  #                       border.col = "white",
-  #                       lwd = 0.5,
-  #                       style = input$map_style2,
-  #                       breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-  #                       palette = input$map_palette2,
-  #                       popup.vars = c(
-  #                         "Cases: " = "cases",
-  #                         "Expected: " = "exp",
-  #                         "RR: " = "RR",
-  #                         "95% CrIs: " = "cris",
-  #                         "Exceedance Prob: " = "exc"))
-  #       } else if(input$variable_var2 == "exc"){
-  #         tm_shape(map_df_sf) +
-  #           tm_polygons(col = "exc",
-  #                       id = input$area_name_map,
-  #                       title = "Exceedance Probability",
-  #                       border.col = "white",
-  #                       lwd = 0.5,
-  #                       style = input$map_style2,
-  #                       breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-  #                       palette = input$map_palette2,
-  #                       popup.vars = c(
-  #                         "Cases: " = "cases",
-  #                         "Expected: " = "exp",
-  #                         "RR: " = "RR",
-  #                         "95% CrIs: " = "cris",
-  #                         "Exceedance Prob: " = "exc"))
-  #       } else{
-  #         tm_shape(map_df_sf) +
-  #           tm_polygons(col = input$variable_var2,
-  #                       id = input$area_name_map,
-  #                       title = input$variable_var2,
-  #                       border.col = "white",
-  #                       lwd = 0.5,
-  #                       style = input$map_style2,
-  #                       breaks = c(seq(input$breaks_min2, input$breaks_max2, input$breaks_step2), Inf),
-  #                       palette = input$map_palette2,
-  #                       popup.vars = c(
-  #                         "Cases: " = "cases",
-  #                         "Expected: " = "exp",
-  #                         "Population" = "area_pop"))
-  #       }
-  #   }
-  #   else{
-  #     if(input$variable_var2 == "SIR"){
-  #       tm_shape(map_df_sf) +
-  #         tm_polygons(col = input$variable_var2,
-  #                     id = input$area_name_map,
-  #                     title = input$variable_var2,
-  #                     border.col = "white",
-  #                     lwd = 0.5,
-  #                     style = input$map_style2,
-  #                     n = input$bins2,
-  #                     palette = input$map_palette2,
-  #                     popup.vars = c(
-  #                       "Cases: " = "cases",
-  #                       "Expected: " = "exp",
-  #                       "SIR: " = "SIR",
-  #                       "95% CIs: " = "cis")) +
-  #         tm_layout(
-  #           frame = F,
-  #           legend.title.size = 1.2,
-  #           legend.text.size = 1
-  #         )} else if(input$variable_var2 == "RR"){
-  #           tm_shape(map_df_sf) +
-  #             tm_polygons(col = input$variable_var2,
-  #                         id = input$area_name_map,
-  #                         title = input$variable_var2,
-  #                         border.col = "white",
-  #                         lwd = 0.5,
-  #                         style = input$map_style2,
-  #                         n = input$bins2,
-  #                         palette = input$map_palette2,
-  #                         popup.vars = c(
-  #                           "Cases: " = "cases",
-  #                           "Expected: " = "exp",
-  #                           "RR: " = "RR",
-  #                           "95% CrIs: " = "cris",
-  #                           "Exceedance Prob: " = "exc"))
-  #         } else if(input$variable_var2 == "exc"){
-  #           tm_shape(map_df_sf) +
-  #             tm_polygons(col = "exc",
-  #                         id = input$area_name_map,
-  #                         title = "Exceedance Probability",
-  #                         border.col = "white",
-  #                         lwd = 0.5,
-  #                         style = input$map_style2,
-  #                         n = input$bins2,
-  #                         palette = input$map_palette2,
-  #                         popup.vars = c(
-  #                           "Cases: " = "cases",
-  #                           "Expected: " = "exp",
-  #                           "RR: " = "RR",
-  #                           "95% CrIs: " = "cris",
-  #                           "Exceedance Prob: " = "exc"))
-  #         } else{
-  #           tm_shape(map_df_sf) +
-  #             tm_polygons(col = input$variable_var2,
-  #                         id = input$area_name_map,
-  #                         title = input$variable_var2,
-  #                         border.col = "white",
-  #                         lwd = 0.5,
-  #                         style = input$map_style2,
-  #                         n = input$bins2,
-  #                         palette = input$map_palette2,
-  #                         popup.vars = c(
-  #                           "Cases: " = "cases",
-  #                           "Expected: " = "exp",
-  #                           "Population" = "area_pop"))
-  #         }
-  #   }
-  # })
 
   #Calculating the spatial effect
   output$spatial_effect <- renderUI({

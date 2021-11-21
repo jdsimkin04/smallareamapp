@@ -92,14 +92,18 @@ ui <- bs4DashPage(
     title = "Analytics panel",
     width = 250,
     id = "controlbar",
-
-
     controlbarMenu(
     id = "controlbarMenu",
     #controlbar items
     controlbarItem(
-      "Analytics menu",
-    selectInput("cancer_var", "Cancer type",""),
+      br(),
+      h5("Analytics menu"),
+      "Click ", strong("Run"), " to view and update results",
+      br(),
+      actionButton("run", "Run!", icon = icon("running"),
+                   style="color: #fff; background-color: #17a2b8; border-color: #2e6da4"),
+      br(),
+      selectInput("cancer_var", "Cancer type",""),
     selectInput("sex_var", "Sex", ""),
     p(strong("Bayesian modeling of cases")),
     selectInput("model_choice", "Choose a model", c("bym2", "bym"), selected = "bym2"),
