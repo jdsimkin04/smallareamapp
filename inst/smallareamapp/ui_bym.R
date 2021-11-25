@@ -146,7 +146,7 @@ ui <- bs4DashPage(
           br(),
           "Interested in the back end R code? Or a quick demo of the App functions? Check out the GitHub Repo.",
           status = "info",
-          btnName = "App GitHub Repo",
+          btnName = "GitHub Repo",
           href = "https://github.com/jdsimkin04"
         ),
     fluidRow(
@@ -159,7 +159,7 @@ ui <- bs4DashPage(
           type = 2,
           image = "https://avatars2.githubusercontent.com/u/41752372?s=460&u=b5974705888e814e9d4661b77be1c2f2357779b3&v=4"
         ),
-        "The methodological approach used in this App was co-designed with a fantastic team of people. Please see our journal article for a use case of this App in population oncology research and a full description of the methods involved.",
+        "The methodological approach used in this App was co-designed with a fantastic team. Please see our GitHub for a walkthrough of the App. We are hoping to publish a journal article soon to describe the methods in detail and demonstrate the full capability of the App.",
         "If you have any feedback, issues, or ideas, please reach out on Twitter or GitHub.",
         br(),
         br(),
@@ -170,11 +170,11 @@ ui <- bs4DashPage(
         boxToolSize = "xl",
         # "Some text here!",
         bs4ListGroup(
-          bs4ListGroupItem( # Link to github
-            tags$div(HTML('<i class="fa fa-book"></i>', '<a href = https://github.com/jdsimkin04> Journal article!</a>')),
-            type = "action",
-            src = "https://github.com/jdsimkin04"
-          ),
+          # bs4ListGroupItem( # Link to github
+          #   tags$div(HTML('<i class="fa fa-book"></i>', '<a href = https://github.com/jdsimkin04> Journal article!</a>')),
+          #   type = "action",
+          #   src = "https://github.com/jdsimkin04"
+          # ),
           bs4ListGroupItem( #Link to twitter
             tags$div(HTML('<i class="fa fa-twitter" style = "color:#0072B2;"></i>', '<a href = https://twitter.com/jdsimkin04?lang=en> @jdsimkin04</a>')),
             type = "action",
