@@ -20,6 +20,8 @@
 # library(bs4Dash)
 # library(shinydashboardPlus)
 
+options(shiny.maxRequestSize = 30*1024^2)
+
 options(spinner.color="#69B4FB", #spinner.color.background="#ffffff",
         spinner.size=1, spinner.type = 7, hide.ui = FALSE)
 

@@ -968,7 +968,7 @@ if(input$map_style1 == "fixed"){
                                              width = 1)))
     fig <- fig %>% layout(
                           yaxis = list(zeroline = FALSE, title = "PIT"),
-                          xaxis = list(zeroline = FALSE, title = "Regions"))
+                          xaxis = list(zeroline = FALSE, title = "Uniform quantiles"))
 
 
     a <- min(test$PIT)
