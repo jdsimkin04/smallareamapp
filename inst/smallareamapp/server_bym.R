@@ -19,7 +19,7 @@
 # library(bs4Dash)
 # library(shinydashboardPlus)
 
-options(shiny.maxRequestSize=20*1024^2)
+options(shiny.maxRequestSize=50*1024^2)
 
 server <- function(input, output, session) {
 
