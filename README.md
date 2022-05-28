@@ -12,6 +12,12 @@ Bayesian computation is done with integrated nested Laplace approximation (INLA)
 
 <img src="https://github.com/jdsimkin04/smallareamapp/blob/main/app_demo.gif" width="50%"/>
 
+## Updates
+
+Updates to come! 
+* Checking for INLA model failures
+* Modified PIT calculations
+* New posterior predictive checks including observed vs. fitted counts, PIT historgram and Pearson residuals.
 
 ## Installation
 
